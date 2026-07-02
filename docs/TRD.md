@@ -103,9 +103,7 @@ The platform shall:
       |             |                      |
       ---------------------------------------
                          |
-                    PostgreSQL
-                         |
-               pgvector Extension
+                      MySQL
                          |
                       Redis
                          |
@@ -143,8 +141,8 @@ The platform shall:
 
 | Component        | Technology |
 | ---------------- | ---------- |
-| Primary Database | PostgreSQL |
-| Vector Storage   | pgvector   |
+| Primary Database | MySQL      |
+| Vector Storage   | Qdrant     |
 | Cache            | Redis      |
 
 ---
@@ -211,7 +209,6 @@ The following technologies are intentionally excluded from V1:
 
 * Kubernetes
 * Kafka
-* Qdrant
 * Elasticsearch
 * Dedicated API Gateway
 * Service Mesh
@@ -297,7 +294,7 @@ Responsibilities:
 
 # 8. Database Requirements
 
-## PostgreSQL
+## MySQL
 
 Stores:
 
@@ -308,33 +305,23 @@ Stores:
 * Messages
 * Metadata
 
-Extensions:
-
-```sql
-pgvector
-uuid-ossp
-```
-
 ---
 
 # 9. Vector Storage Requirements
 
-Instead of a dedicated vector database, vectors shall initially be stored in PostgreSQL using pgvector.
+Vectors are stored in Qdrant, a dedicated vector database running as a Docker service.
 
 Reasons:
 
-* Lower cost
-* Simpler deployment
-* Fewer services
-* Easier maintenance
+* Purpose-built for semantic search
+* Supports filtering on metadata alongside vector queries
+* Self-hosted, zero additional cost
 
 Expected Capacity:
 
 ```text
 5M+ vectors
 ```
-
-Migration to Qdrant only when operational requirements justify separation.
 
 ---
 
@@ -394,7 +381,7 @@ Chunking
    ↓
 Embedding Generation
    ↓
-pgvector Storage
+Qdrant Storage
    ↓
 Ready
 ```
@@ -572,9 +559,9 @@ Future:
 Docker Compose
 
 - FastAPI
-- PostgreSQL
+- MySQL
 - Redis
-- MinIO
+- Qdrant
 - Celery Worker
 ```
 
@@ -672,7 +659,7 @@ Objectives:
 
 Changes:
 
-* Migrate pgvector → Qdrant
+* Scale Qdrant to dedicated instance
 * Read Replicas
 * Distributed Workers
 * Dedicated Retrieval Service
