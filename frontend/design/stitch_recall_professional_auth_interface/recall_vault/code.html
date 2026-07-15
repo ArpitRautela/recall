@@ -1,0 +1,515 @@
+<!DOCTYPE html><html lang="en" class="dark"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=block" rel="stylesheet"><script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script><script id="tailwind-config">try{
+      tailwind.config = {
+        darkMode: "class",
+        theme: {
+          extend: {
+            "colors": {
+                    "surface-container-highest": "#353534",
+                    "inverse-on-surface": "#313030",
+                    "tertiary": "#ffffff",
+                    "on-error": "#690005",
+                    "surface": "#131313",
+                    "on-primary-fixed-variant": "#454747",
+                    "inverse-surface": "#e5e2e1",
+                    "surface-container-lowest": "#0e0e0e",
+                    "on-surface": "#e5e2e1",
+                    "on-background": "#e5e2e1",
+                    "on-secondary": "#1000a9",
+                    "on-secondary-fixed-variant": "#2f2ebe",
+                    "surface-bright": "#3a3939",
+                    "outline-variant": "#444748",
+                    "outline": "#8e9192",
+                    "primary-fixed": "#e2e2e2",
+                    "on-primary": "#2f3131",
+                    "surface-tint": "#c6c6c7",
+                    "on-secondary-container": "#b0b2ff",
+                    "on-secondary-fixed": "#07006c",
+                    "surface-variant": "#353534",
+                    "on-primary-container": "#636565",
+                    "tertiary-container": "#e2e2e2",
+                    "primary": "#ffffff",
+                    "on-tertiary-fixed-variant": "#454747",
+                    "on-tertiary-container": "#636565",
+                    "tertiary-fixed-dim": "#c6c6c7",
+                    "on-surface-variant": "#c4c7c8",
+                    "error-container": "#93000a",
+                    "secondary-fixed-dim": "#c0c1ff",
+                    "surface-dim": "#131313",
+                    "on-primary-fixed": "#1a1c1c",
+                    "secondary-fixed": "#e1e0ff",
+                    "surface-container": "#201f1f",
+                    "inverse-primary": "#5d5f5f",
+                    "on-tertiary": "#2f3131",
+                    "on-error-container": "#ffdad6",
+                    "error": "#ffb4ab",
+                    "background": "#131313",
+                    "primary-fixed-dim": "#c6c6c7",
+                    "tertiary-fixed": "#e2e2e2",
+                    "on-tertiary-fixed": "#1a1c1c",
+                    "secondary-container": "#3131c0",
+                    "secondary": "#c0c1ff",
+                    "surface-container-low": "#1c1b1b",
+                    "primary-container": "#e2e2e2",
+                    "surface-container-high": "#2a2a2a"
+            },
+            "borderRadius": {
+                    "DEFAULT": "0.125rem",
+                    "lg": "0.25rem",
+                    "xl": "0.5rem",
+                    "full": "0.75rem"
+            },
+            "spacing": {
+                    "stack-lg": "24px",
+                    "stack-sm": "8px",
+                    "container-max": "1280px",
+                    "margin-x": "32px",
+                    "stack-xs": "4px",
+                    "stack-xl": "48px",
+                    "stack-md": "16px",
+                    "gutter": "24px"
+            },
+            "fontFamily": {
+                    "headline-lg": ["Inter"],
+                    "body-md": ["Inter"],
+                    "body-lg": ["Inter"],
+                    "label-md": ["Inter"],
+                    "headline-md": ["Inter"],
+                    "label-sm": ["Inter"],
+                    "display-lg": ["Inter"],
+                    "title-lg": ["Inter"]
+            }
+          }
+        }
+      }
+    }catch(_e){}</script><meta charset="utf-8"></head><body class="overflow-hidden">
+<!-- App Shell Container -->
+<div class="flex h-screen w-full">
+<!-- SideNavBar (JSON COMPONENT 1) -->
+<aside class="fixed left-0 top-0 h-screen w-[280px] bg-surface-container-low border-r border-outline-variant/10 flex flex-col p-stack-md z-50">
+<!-- Brand -->
+<div class="flex items-center gap-3 mb-stack-xl px-2">
+<div class="w-8 h-8 bg-primary rounded flex items-center justify-center">
+<span class="material-symbols-outlined text-background text-lg font-bold" data-weight="fill">psychology</span>
+</div>
+<div>
+<h1 class="font-headline-md text-headline-md font-bold text-primary leading-tight">RECALL</h1>
+<p class="text-label-sm text-on-surface-variant tracking-wider uppercase opacity-60">Premium Platform</p>
+</div>
+</div>
+<!-- Primary Navigation -->
+<nav class="flex-1 space-y-1">
+<div class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors duration-200 cursor-pointer">
+<span class="material-symbols-outlined" data-icon="add_comment">add_comment</span>
+<span class="font-body-md text-body-md">New Chat</span>
+</div>
+<div class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors duration-200 cursor-pointer">
+<span class="material-symbols-outlined" data-icon="history">history</span>
+<span class="font-body-md text-body-md">Recent Chats</span>
+</div>
+<!-- ACTIVE TAB: Files (Vault maps to Files) -->
+<div class="flex items-center gap-3 px-3 py-2 rounded-lg bg-white/5 text-primary border-l-2 border-primary cursor-default">
+<span class="material-symbols-outlined" data-icon="folder" style="font-variation-settings: 'FILL' 1;">folder</span>
+<span class="font-body-md text-body-md">Files</span>
+</div>
+<div class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors duration-200 cursor-pointer">
+<span class="material-symbols-outlined" data-icon="psychology">psychology</span>
+<span class="font-body-md text-body-md">Memories</span>
+</div>
+<div class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors duration-200 cursor-pointer">
+<span class="material-symbols-outlined" data-icon="search">search</span>
+<span class="font-body-md text-body-md">Search</span>
+</div>
+<div class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors duration-200 cursor-pointer">
+<span class="material-symbols-outlined" data-icon="settings">settings</span>
+<span class="font-body-md text-body-md">Settings</span>
+</div>
+</nav>
+<!-- Footer Section -->
+<div class="mt-auto space-y-4 pt-stack-md border-t border-outline-variant/10">
+<div class="bg-surface-container-high rounded-xl p-4 etched-border">
+<h4 class="font-title-lg text-sm font-semibold text-primary mb-1">Upgrade to Pro</h4>
+<p class="text-label-sm text-on-surface-variant mb-3">Unlimited vault storage and GPT-4 integration.</p>
+<button class="w-full primary-btn py-2 px-3 rounded-lg font-label-md text-label-md">Upgrade Now</button>
+</div>
+<div class="space-y-1">
+<div class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors cursor-pointer">
+<span class="material-symbols-outlined" data-icon="help">help</span>
+<span class="font-body-md text-body-md">Support</span>
+</div>
+<div class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors cursor-pointer">
+<span class="material-symbols-outlined" data-icon="account_circle">account_circle</span>
+<span class="font-body-md text-body-md">Profile</span>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Canvas Area -->
+<main class="flex-1 ml-[280px] h-screen flex flex-col overflow-hidden">
+<!-- TopAppBar (JSON COMPONENT 2) -->
+<header class="h-16 glass-header border-b border-outline-variant/5 flex justify-between items-center px-margin-x sticky top-0 z-40">
+<div class="flex items-center gap-stack-md flex-1">
+<div class="relative w-full max-w-md">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-lg">search</span>
+<input type="text" placeholder="Search your knowledge base..." class="w-full bg-surface-container-low border-none rounded-lg py-2 pl-10 pr-4 text-body-md text-on-surface placeholder:text-on-surface-variant focus:ring-1 focus:ring-primary/20">
+</div>
+</div>
+<div class="flex items-center gap-stack-md">
+<button class="w-10 h-10 flex items-center justify-center text-on-surface-variant hover:text-primary transition-all">
+<span class="material-symbols-outlined" data-icon="notifications">notifications</span>
+</button>
+<button class="w-10 h-10 flex items-center justify-center text-on-surface-variant hover:text-primary transition-all">
+<span class="material-symbols-outlined" data-icon="help_outline">help_outline</span>
+</button>
+<div class="w-8 h-8 rounded-full overflow-hidden ml-2 ring-1 ring-outline-variant/20">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a person in a sleek, minimalist tech office environment. The person is looking directly at the camera with a confident expression. The lighting is cold, clean, and futuristic with subtle blue tints, matching the professional high-tech AI aesthetic of the platform." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDVaiGQO8VH742HpqKaWjJaI71Uw5mUqhkTBxQnBSbOJMWEe7-SmzO_q9r_FgsdFCRWlo5S8Luz1stApIbNqHptyKeCa9dn_dHHu2p-I0yIVScC-4wjdtczP_vGV2jM0YqVUXUPAzyCO0dMkCnN0Y88v9NMr375Eab38ICsuFZlnAi-5t_8xR2KUdZZKDzmkgNUUk7987JmArn0tuI5ziUehQ0eNwEVLjUHcEZHkmGVCPCfROEek8tCwCCs5reXRqPKmypodm7bss54">
+</div>
+</div>
+</header>
+<!-- Content Area -->
+<div class="flex-1 overflow-y-auto custom-scrollbar px-margin-x py-stack-lg">
+<!-- Page Header -->
+<div class="flex flex-col md:flex-row md:items-end justify-between gap-stack-md mb-stack-xl">
+<div>
+<h2 class="font-headline-lg text-headline-lg text-primary">Vault</h2>
+<p class="font-body-lg text-body-lg text-on-surface-variant">Manage every document in your knowledge base.</p>
+</div>
+<div class="flex items-center gap-3">
+<button class="secondary-btn flex items-center gap-2 px-4 py-2.5 rounded-lg font-label-md text-label-md">
+<span class="material-symbols-outlined text-[20px]">create_new_folder</span>
+                            New Folder
+                        </button>
+<button class="secondary-btn flex items-center gap-2 px-4 py-2.5 rounded-lg font-label-md text-label-md">
+<span class="material-symbols-outlined text-[20px]">cloud_download</span>
+                            Import
+                        </button>
+<button class="primary-btn flex items-center gap-2 px-6 py-2.5 rounded-lg font-label-md text-label-md font-semibold">
+<span class="material-symbols-outlined text-[20px]">upload_file</span>
+                            Upload Files
+                        </button>
+</div>
+</div>
+<!-- Stats Row -->
+<div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter mb-stack-xl">
+<div class="bento-card etched-border p-5 rounded-xl">
+<div class="flex justify-between items-start mb-2">
+<span class="text-label-sm text-on-surface-variant uppercase tracking-widest">Total Documents</span>
+<span class="material-symbols-outlined text-primary/40">description</span>
+</div>
+<div class="flex items-end gap-2">
+<span class="font-headline-md text-headline-md text-primary">1,284</span>
+<span class="text-label-sm text-green-400 mb-1.5">+12%</span>
+</div>
+</div>
+<div class="bento-card etched-border p-5 rounded-xl">
+<div class="flex justify-between items-start mb-2">
+<span class="text-label-sm text-on-surface-variant uppercase tracking-widest">Storage Used</span>
+<span class="material-symbols-outlined text-primary/40">data_usage</span>
+</div>
+<div class="flex items-end gap-2">
+<span class="font-headline-md text-headline-md text-primary">4.2 GB</span>
+<span class="text-label-sm text-on-surface-variant mb-1.5">of 10GB</span>
+</div>
+</div>
+<div class="bento-card etched-border p-5 rounded-xl">
+<div class="flex justify-between items-start mb-2">
+<span class="text-label-sm text-on-surface-variant uppercase tracking-widest">Indexed Items</span>
+<span class="material-symbols-outlined text-primary/40">offline_pin</span>
+</div>
+<div class="flex items-end gap-2">
+<span class="font-headline-md text-headline-md text-primary">1,150</span>
+<span class="text-label-sm text-on-surface-variant mb-1.5">90%</span>
+</div>
+</div>
+<div class="bento-card etched-border p-5 rounded-xl">
+<div class="flex justify-between items-start mb-2">
+<span class="text-label-sm text-on-surface-variant uppercase tracking-widest">Recently Added</span>
+<span class="material-symbols-outlined text-primary/40">update</span>
+</div>
+<div class="flex items-end gap-2">
+<span class="font-headline-md text-headline-md text-primary">42</span>
+<span class="text-label-sm text-on-surface-variant mb-1.5">last 24h</span>
+</div>
+</div>
+</div>
+<div class="flex flex-col lg:flex-row gap-gutter">
+<!-- Collections Sidebar-->
+<aside class="w-full lg:w-[240px] shrink-0 space-y-stack-md">
+<h3 class="font-label-md text-label-sm uppercase tracking-[0.1em] text-on-surface-variant/60 px-2">Collections</h3>
+<nav class="space-y-1">
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg bg-white/5 text-primary etched-border active-nav-indicator" href="#">
+<span class="material-symbols-outlined text-[20px]" data-weight="fill">folder_shared</span>
+<span class="font-body-md text-body-md">All Documents</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors group" href="#">
+<span class="material-symbols-outlined text-[20px] group-hover:text-primary">work</span>
+<span class="font-body-md text-body-md">Work</span>
+<span class="ml-auto text-label-sm opacity-40">248</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors group" href="#">
+<span class="material-symbols-outlined text-[20px] group-hover:text-primary">person</span>
+<span class="font-body-md text-body-md">Personal</span>
+<span class="ml-auto text-label-sm opacity-40">152</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors group" href="#">
+<span class="material-symbols-outlined text-[20px] group-hover:text-primary">science</span>
+<span class="font-body-md text-body-md">Research</span>
+<span class="ml-auto text-label-sm opacity-40">89</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2.5 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors group" href="#">
+<span class="material-symbols-outlined text-[20px] group-hover:text-primary">inventory_2</span>
+<span class="font-body-md text-body-md">Projects</span>
+<span class="ml-auto text-label-sm opacity-40">312</span>
+</a>
+</nav>
+<div class="pt-stack-md">
+<button class="w-full flex items-center justify-center gap-2 py-2 px-3 rounded-lg border border-dashed border-outline-variant/30 text-on-surface-variant hover:border-primary/40 hover:text-primary transition-all text-label-md">
+<span class="material-symbols-outlined text-sm">add</span>
+                                New Collection
+                            </button>
+</div>
+</aside>
+<!-- Document Grid Section -->
+<div class="flex-1 space-y-gutter">
+<!-- Toolbar -->
+<div class="flex flex-wrap items-center justify-between gap-4 p-4 bento-card etched-border rounded-xl">
+<div class="flex items-center gap-3 flex-1 min-w-[300px]">
+<span class="material-symbols-outlined text-on-surface-variant">filter_list</span>
+<div class="flex items-center gap-2">
+<button class="px-3 py-1.5 rounded bg-surface-container-highest/50 text-label-md etched-border hover:bg-surface-container-highest transition-colors">File Type</button>
+<button class="px-3 py-1.5 rounded bg-surface-container-highest/50 text-label-md etched-border hover:bg-surface-container-highest transition-colors">Date</button>
+<button class="px-3 py-1.5 rounded bg-surface-container-highest/50 text-label-md etched-border hover:bg-surface-container-highest transition-colors">Collection</button>
+</div>
+</div>
+<div class="flex items-center gap-4">
+<div class="h-4 w-[1px] bg-outline-variant/20"></div>
+<div class="flex items-center gap-2 text-label-md text-on-surface-variant">
+<span class="">Sort by:</span>
+<select class="bg-transparent border-none focus:ring-0 text-primary font-medium cursor-pointer p-0 pr-6 text-label-md">
+<option>Date Modified</option>
+<option>Name (A-Z)</option>
+<option>File Size</option>
+</select>
+</div>
+<div class="flex items-center bg-surface-container-low rounded p-1 etched-border">
+<button class="p-1 rounded bg-white/10 text-primary">
+<span class="material-symbols-outlined text-sm">grid_view</span>
+</button>
+<button class="p-1 rounded text-on-surface-variant hover:text-primary">
+<span class="material-symbols-outlined text-sm">view_list</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Grid -->
+<div class="grid grid-cols-1 md:grid-cols-2 xl:grid-cols-3 2xl:grid-cols-4 gap-gutter">
+<!-- Document-->
+<div class="bento-card etched-border rounded-xl p-4 flex flex-col group relative overflow-hidden">
+<div class="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-red-500/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<div class="flex items-start justify-between mb-4">
+<div class="w-12 h-12 bg-red-500/10 rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-red-400 text-2xl">picture_as_pdf</span>
+</div>
+<button class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10 text-on-surface-variant transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+<div class="space-y-1 mb-4">
+<h4 class="font-title-lg text-[15px] text-primary truncate">Q4 Market Research.pdf</h4>
+<div class="flex items-center gap-2 text-label-sm text-on-surface-variant/60">
+<span class="">2.4 MB</span>
+<span class="">•</span>
+<span class="">Oct 24, 2023</span>
+</div>
+</div>
+<div class="mt-auto flex items-center justify-between">
+<span class="status-badge px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider text-green-400">Indexed</span>
+<div class="flex -space-x-2">
+<div class="w-6 h-6 rounded-full border-2 border-surface bg-surface-container-highest"></div>
+<div class="w-6 h-6 rounded-full border-2 border-surface bg-surface-container-highest"></div>
+</div>
+</div>
+</div>
+<!-- Document Card 2: DOCX -->
+<div class="bento-card etched-border rounded-xl p-4 flex flex-col group relative overflow-hidden">
+<div class="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-blue-500/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<div class="flex items-start justify-between mb-4">
+<div class="w-12 h-12 bg-blue-500/10 rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-blue-400 text-2xl">description</span>
+</div>
+<button class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10 text-on-surface-variant transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+<div class="space-y-1 mb-4">
+<h4 class="font-title-lg text-[15px] text-primary truncate">Project Roadmap 2024.docx</h4>
+<div class="flex items-center gap-2 text-label-sm text-on-surface-variant/60">
+<span class="">850 KB</span>
+<span class="">•</span>
+<span class="">Oct 22, 2023</span>
+</div>
+</div>
+<div class="mt-auto flex items-center justify-between">
+<span class="status-badge px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider text-yellow-400">Processing</span>
+<div class="flex items-center gap-1">
+<div class="w-1.5 h-1.5 rounded-full bg-yellow-400 animate-pulse"></div>
+</div>
+</div>
+</div>
+<!-- Document Card 3: IMAGE -->
+<div class="bento-card etched-border rounded-xl p-4 flex flex-col group relative overflow-hidden h-full">
+<div class="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-purple-500/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<div class="flex items-start justify-between mb-4">
+<div class="w-12 h-12 bg-purple-500/10 rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-purple-400 text-2xl">image</span>
+</div>
+<button class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10 text-on-surface-variant transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+<div class="space-y-1 mb-4">
+<h4 class="font-title-lg text-[15px] text-primary truncate">System Architecture.png</h4>
+<div class="flex items-center gap-2 text-label-sm text-on-surface-variant/60">
+<span class="">12.1 MB</span>
+<span class="">•</span>
+<span class="">Oct 21, 2023</span>
+</div>
+</div>
+<div class="mt-auto flex items-center justify-between">
+<span class="status-badge px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider text-green-400">Indexed</span>
+<span class="text-[10px] text-on-surface-variant italic">OCR Applied</span>
+</div>
+</div>
+<!-- Document Card 4: SPREADSHEET -->
+<div class="bento-card etched-border rounded-xl p-4 flex flex-col group relative overflow-hidden">
+<div class="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-green-500/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<div class="flex items-start justify-between mb-4">
+<div class="w-12 h-12 bg-green-500/10 rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-green-400 text-2xl">table_chart</span>
+</div>
+<button class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10 text-on-surface-variant transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+<div class="space-y-1 mb-4">
+<h4 class="font-title-lg text-[15px] text-primary truncate">Budget Breakdown Q3.xlsx</h4>
+<div class="flex items-center gap-2 text-label-sm text-on-surface-variant/60">
+<span class="">1.2 MB</span>
+<span class="">•</span>
+<span class="">Oct 20, 2023</span>
+</div>
+</div>
+<div class="mt-auto flex items-center justify-between">
+<span class="status-badge px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider text-green-400">Indexed</span>
+<span class="text-on-surface-variant/40"><span class="material-symbols-outlined text-[14px]">lock</span></span>
+</div>
+</div>
+<!-- Document Card 5: PDF -->
+<div class="bento-card etched-border rounded-xl p-4 flex flex-col group relative overflow-hidden">
+<div class="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-red-500/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<div class="flex items-start justify-between mb-4">
+<div class="w-12 h-12 bg-red-500/10 rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-red-400 text-2xl">picture_as_pdf</span>
+</div>
+<button class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10 text-on-surface-variant transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+<div class="space-y-1 mb-4">
+<h4 class="font-title-lg text-[15px] text-primary truncate">Legal Terms v2.pdf</h4>
+<div class="flex items-center gap-2 text-label-sm text-on-surface-variant/60">
+<span class="">4.5 MB</span>
+<span class="">•</span>
+<span class="">Oct 19, 2023</span>
+</div>
+</div>
+<div class="mt-auto flex items-center justify-between">
+<span class="status-badge px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider text-green-400">Indexed</span>
+</div>
+</div>
+<!-- Document Card 6: CODE -->
+<div class="bento-card etched-border rounded-xl p-4 flex flex-col group relative overflow-hidden">
+<div class="absolute top-0 left-0 w-full h-[2px] bg-gradient-to-r from-transparent via-orange-500/40 to-transparent opacity-0 group-hover:opacity-100 transition-opacity"></div>
+<div class="flex items-start justify-between mb-4">
+<div class="w-12 h-12 bg-orange-500/10 rounded-lg flex items-center justify-center">
+<span class="material-symbols-outlined text-orange-400 text-2xl">code</span>
+</div>
+<button class="w-8 h-8 flex items-center justify-center rounded-full hover:bg-white/10 text-on-surface-variant transition-colors">
+<span class="material-symbols-outlined">more_vert</span>
+</button>
+</div>
+<div class="space-y-1 mb-4">
+<h4 class="font-title-lg text-[15px] text-primary truncate">Data Pipeline Script.py</h4>
+<div class="flex items-center gap-2 text-label-sm text-on-surface-variant/60">
+<span class="">12 KB</span>
+<span class="">•</span>
+<span class="">Oct 18, 2023</span>
+</div>
+</div>
+<div class="mt-auto flex items-center justify-between">
+<span class="status-badge px-2 py-0.5 rounded text-[10px] font-bold uppercase tracking-wider text-red-400">Error</span>
+<span class="material-symbols-outlined text-red-400 text-sm">warning</span>
+</div>
+</div>
+<!-- Empty State Skeleton/Add New -->
+<button class="border-2 border-dashed border-outline-variant/20 rounded-xl p-4 flex flex-col items-center justify-center gap-3 hover:border-primary/20 hover:bg-white/5 transition-all group min-h-[160px]">
+<div class="w-10 h-10 rounded-full bg-surface-container-highest flex items-center justify-center group-hover:scale-110 transition-transform">
+<span class="material-symbols-outlined text-on-surface-variant group-hover:text-primary">add</span>
+</div>
+<span class="font-label-md text-on-surface-variant group-hover:text-primary">Upload more</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+<!-- Footer Stats / Status Bar -->
+<footer class="h-10 bg-surface-container-lowest/80 backdrop-blur-sm border-t border-outline-variant/10 flex items-center justify-between px-margin-x text-label-sm text-on-surface-variant/60">
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-2">
+<span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>
+<span class="">Systems Online</span>
+</div>
+<span class="">Last sync: 2 minutes ago</span>
+</div>
+<div class="flex items-center gap-4">
+<span class="">1,284 Documents</span>
+<span class="">18.4GB Used</span>
+</div>
+</footer>
+</main>
+</div>
+<!-- Micro-interaction Script -->
+<script>
+        // Simple search highlighting simulation
+        const searchInput = document.querySelector('input[type="text"]');
+        searchInput.addEventListener('input', (e) => {
+            const query = e.target.value.toLowerCase();
+            const cards = document.querySelectorAll('.bento-card h4');
+            
+            cards.forEach(card => {
+                const parent = card.closest('.bento-card');
+                if (card.textContent.toLowerCase().includes(query)) {
+                    parent.style.opacity = '1';
+                    parent.style.transform = 'scale(1)';
+                } else {
+                    parent.style.opacity = '0.3';
+                    parent.style.transform = 'scale(0.98)';
+                }
+            });
+        });
+
+        // Toggle Active State logic for Collections
+        const collLinks = document.querySelectorAll('aside nav a');
+        collLinks.forEach(link => {
+            link.addEventListener('click', (e) => {
+                e.preventDefault();
+                collLinks.forEach(l => {
+                    l.classList.remove('bg-white/5', 'text-primary', 'etched-border', 'active-nav-indicator');
+                    l.classList.add('text-on-surface-variant');
+                });
+                link.classList.remove('text-on-surface-variant');
+                link.classList.add('bg-white/5', 'text-primary', 'etched-border', 'active-nav-indicator');
+            });
+        });
+    </script>
+
+</body></html>

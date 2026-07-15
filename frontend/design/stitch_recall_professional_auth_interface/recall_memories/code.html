@@ -1,0 +1,456 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>AI Memory - Memories Explorer</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<script id="tailwind-config">
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "tertiary-container": "#e2e2e2",
+                        "on-primary-fixed-variant": "#454747",
+                        "on-primary-container": "#636565",
+                        "surface-container": "#201f1f",
+                        "surface-bright": "#3a3939",
+                        "tertiary-fixed": "#e2e2e2",
+                        "secondary-fixed": "#e1e0ff",
+                        "tertiary": "#ffffff",
+                        "surface-container-highest": "#353534",
+                        "secondary-fixed-dim": "#c0c1ff",
+                        "secondary": "#c0c1ff",
+                        "outline-variant": "#444748",
+                        "on-tertiary": "#2f3131",
+                        "secondary-container": "#3131c0",
+                        "surface-container-low": "#1c1b1b",
+                        "surface-dim": "#131313",
+                        "error": "#ffb4ab",
+                        "on-secondary": "#1000a9",
+                        "on-surface": "#e5e2e1",
+                        "surface-variant": "#353534",
+                        "primary-fixed-dim": "#c6c6c7",
+                        "on-primary": "#2f3131",
+                        "on-error-container": "#ffdad6",
+                        "on-surface-variant": "#c4c7c8",
+                        "primary-container": "#e2e2e2",
+                        "surface-container-lowest": "#0e0e0e",
+                        "on-tertiary-fixed-variant": "#454747",
+                        "tertiary-fixed-dim": "#c6c6c7",
+                        "on-tertiary-fixed": "#1a1c1c",
+                        "on-secondary-container": "#b0b2ff",
+                        "primary-fixed": "#e2e2e2",
+                        "inverse-surface": "#e5e2e1",
+                        "surface-container-high": "#2a2a2a",
+                        "surface-tint": "#c6c6c7",
+                        "on-secondary-fixed": "#07006c",
+                        "outline": "#8e9192",
+                        "on-secondary-fixed-variant": "#2f2ebe",
+                        "on-primary-fixed": "#1a1c1c",
+                        "on-background": "#e5e2e1",
+                        "background": "#131313",
+                        "on-tertiary-container": "#636565",
+                        "primary": "#ffffff",
+                        "on-error": "#690005",
+                        "inverse-primary": "#5d5f5f",
+                        "inverse-on-surface": "#313030",
+                        "surface": "#131313",
+                        "error-container": "#93000a"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "stack-sm": "8px",
+                        "stack-xl": "48px",
+                        "margin-x": "32px",
+                        "stack-xs": "4px",
+                        "stack-lg": "24px",
+                        "stack-md": "16px",
+                        "container-max": "1280px",
+                        "gutter": "24px"
+                    },
+                    "fontFamily": {
+                        "headline-lg-mobile": ["Inter"],
+                        "label-md": ["Inter"],
+                        "headline-md": ["Inter"],
+                        "title-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "headline-lg": ["Inter"],
+                        "display-lg": ["Inter"],
+                        "body-lg": ["Inter"],
+                        "label-sm": ["Inter"]
+                    },
+                    "fontSize": {
+                        "headline-lg-mobile": ["28px", {"lineHeight": "36px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                        "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                        "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                        "title-lg": ["18px", {"lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "500"}],
+                        "body-md": ["14px", {"lineHeight": "20px", "letterSpacing": "-0.006em", "fontWeight": "400"}],
+                        "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.03em", "fontWeight": "600"}],
+                        "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.04em", "fontWeight": "600"}],
+                        "body-lg": ["16px", {"lineHeight": "24px", "letterSpacing": "-0.011em", "fontWeight": "400"}],
+                        "label-sm": ["11px", {"lineHeight": "14px", "letterSpacing": "0.05em", "fontWeight": "600"}]
+                    }
+                },
+            },
+        }
+    </script>
+<style>
+        body {
+            background-color: #131313;
+            color: #e5e2e1;
+            font-family: 'Inter', sans-serif;
+            overflow-x: hidden;
+        }
+        
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 4px;
+            height: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: rgba(255, 255, 255, 0.05);
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: rgba(255, 255, 255, 0.1);
+            border-radius: 10px;
+        }
+
+        .micro-bevel {
+            border-top: 1px solid rgba(255, 255, 255, 0.08);
+            border-left: 1px solid rgba(255, 255, 255, 0.05);
+            border-right: 1px solid rgba(255, 255, 255, 0.05);
+            border-bottom: 1px solid rgba(255, 255, 255, 0.03);
+        }
+
+        .glass-highlight {
+            background: radial-gradient(circle at 50% 0%, rgba(255, 255, 255, 0.03) 0%, transparent 70%);
+        }
+    </style>
+</head>
+<body class="dark bg-background text-on-background">
+<!-- Sidebar Navigation -->
+<aside class="fixed left-0 top-0 h-screen w-[280px] bg-surface-container-low border-r border-outline-variant/10 flex flex-col p-stack-md z-50">
+<div class="mb-stack-xl flex flex-col gap-1">
+<span class="font-headline-md text-headline-md font-bold text-primary">AI Memory</span>
+<span class="text-on-surface-variant text-label-md">Premium Platform</span>
+</div>
+<nav class="flex-1 flex flex-col gap-2">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">add_comment</span>
+<span class="font-body-md text-body-md">New Chat</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">history</span>
+<span class="font-body-md text-body-md">Recent Chats</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">folder</span>
+<span class="font-body-md text-body-md">Files</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg bg-white/5 text-primary border-l-2 border-primary" href="#">
+<span class="material-symbols-outlined">psychology</span>
+<span class="font-body-md text-body-md">Memories</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">search</span>
+<span class="font-body-md text-body-md">Search</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-colors duration-200" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="font-body-md text-body-md">Settings</span>
+</a>
+</nav>
+<div class="mt-auto pt-stack-md flex flex-col gap-4 border-t border-outline-variant/10">
+<button class="w-full py-2 bg-primary text-on-primary font-label-md text-label-md rounded-lg font-bold hover:opacity-90 active:scale-[0.98] transition-all">
+                Upgrade to Pro
+            </button>
+<div class="flex flex-col gap-2">
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high" href="#">
+<span class="material-symbols-outlined">help</span>
+<span class="font-body-md text-body-md">Support</span>
+</a>
+<a class="flex items-center gap-3 px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high" href="#">
+<span class="material-symbols-outlined">account_circle</span>
+<span class="font-body-md text-body-md">Profile</span>
+</a>
+</div>
+</div>
+</aside>
+<!-- Main Content Area -->
+<main class="ml-[280px] min-h-screen flex flex-col relative">
+<!-- Top App Bar -->
+<header class="sticky top-0 z-40 bg-background/80 backdrop-blur-md flex justify-between items-center h-16 px-margin-x border-b border-outline-variant/5">
+<div class="flex items-center gap-4 flex-1">
+<div class="relative w-full max-w-md group">
+<span class="material-symbols-outlined absolute left-3 top-1/2 -translate-y-1/2 text-on-surface-variant text-[20px] pointer-events-none">search</span>
+<input class="w-full bg-surface-container-low border border-outline-variant/20 rounded-lg pl-10 pr-4 py-1.5 text-body-md font-body-md focus:ring-1 focus:ring-primary/20 focus:outline-none transition-all" placeholder="Search memories..." type="text"/>
+</div>
+</div>
+<div class="flex items-center gap-stack-lg">
+<button class="text-on-surface-variant hover:text-primary transition-all">
+<span class="material-symbols-outlined">notifications</span>
+</button>
+<button class="text-on-surface-variant hover:text-primary transition-all">
+<span class="material-symbols-outlined">help_outline</span>
+</button>
+<div class="h-8 w-8 rounded-full overflow-hidden border border-outline-variant/20">
+<img class="w-full h-full object-cover" data-alt="A professional headshot of a user with sharp features and a modern aesthetic, set against a blurred, high-tech office background with subtle blue and grey tones to match the AI Memory platform's branding." src="https://lh3.googleusercontent.com/aida-public/AB6AXuC6DBgPBgFnI9bwWJs1-32pgiFhhZuKxXGMOZZdr0NNqxstzkgy2xlhhaI9jaH7AF-GzqUKwGGHww9OyX-Af_IH_AB11E3CgpA44UDHCluBi0eb9zK-ksFWZlNAO6GJOnOr9akhg2k7ugfH4YQF2hy8_jIEH5u-tn8PMbCJ0wzqCAu0vNtgQS1kSezD_dL_2Hm-dNLi7wiLYQAEjt-7xlvoUZn8-tq8meCeRClKBwDiAMg-LGCDvxT6mUtVKeQdFgC2OUzTG0FbPtbF"/>
+</div>
+</div>
+</header>
+<!-- Content Canvas -->
+<div class="flex-1 flex">
+<!-- Left Side: Main Scrollable Content -->
+<div class="flex-1 px-margin-x py-stack-lg flex flex-col gap-stack-xl max-w-4xl mx-auto xl:mx-0">
+<!-- Page Header -->
+<header>
+<h1 class="font-headline-lg text-headline-lg text-primary mb-1">Memories</h1>
+<p class="font-body-md text-body-md text-on-surface-variant">Your unified long-term knowledge base</p>
+</header>
+<!-- AI Insights Card -->
+<section>
+<div class="bg-surface-container micro-bevel glass-highlight rounded-xl p-stack-lg relative overflow-hidden">
+<div class="absolute top-0 right-0 p-4 opacity-10">
+<span class="material-symbols-outlined text-[64px]" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+</div>
+<div class="flex flex-col gap-stack-md">
+<div class="flex items-center gap-2 text-primary">
+<span class="material-symbols-outlined text-[20px]">insights</span>
+<span class="font-label-md text-label-md uppercase tracking-wider">Neural Analysis</span>
+</div>
+<h2 class="font-title-lg text-title-lg text-primary max-w-lg">
+                                You've been focused on <span class="text-secondary font-bold">Kubernetes networking</span> lately, specifically around ingress controllers and service meshes.
+                            </h2>
+<div class="flex gap-4">
+<div class="px-3 py-1 bg-white/5 rounded-full border border-white/10 text-label-sm text-on-surface-variant">
+                                    32 Connected Nodes
+                                </div>
+<div class="px-3 py-1 bg-white/5 rounded-full border border-white/10 text-label-sm text-on-surface-variant">
+                                    14 Conversations
+                                </div>
+</div>
+</div>
+</div>
+</section>
+<!-- Filters Toolbar -->
+<section class="flex items-center justify-between gap-4 py-2 border-y border-outline-variant/5">
+<div class="flex items-center gap-2 overflow-x-auto no-scrollbar py-1">
+<button class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-primary text-on-primary text-label-md font-bold shrink-0">
+<span class="material-symbols-outlined text-[16px]">filter_list</span>
+                            All Memories
+                        </button>
+<button class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface-container-high border border-outline-variant/20 text-on-surface-variant text-label-md shrink-0 hover:border-primary/40">
+                            Topic: Networking
+                        </button>
+<button class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface-container-high border border-outline-variant/20 text-on-surface-variant text-label-md shrink-0 hover:border-primary/40">
+                            Importance: High
+                        </button>
+<button class="flex items-center gap-2 px-3 py-1.5 rounded-lg bg-surface-container-high border border-outline-variant/20 text-on-surface-variant text-label-md shrink-0 hover:border-primary/40">
+                            Date: Last 30 Days
+                        </button>
+</div>
+<button class="material-symbols-outlined text-on-surface-variant p-1.5 rounded-lg hover:bg-surface-container-high">sort</button>
+</section>
+<!-- Memory Cards Grid -->
+<section class="grid grid-cols-1 md:grid-cols-2 gap-stack-md">
+<!-- Card 1 -->
+<div class="bg-surface-container micro-bevel p-stack-md rounded-xl hover:bg-surface-container-high transition-all cursor-pointer flex flex-col gap-3 group">
+<div class="flex justify-between items-start">
+<h3 class="font-title-lg text-title-lg text-primary leading-tight">Kubernetes Ingress-NGINX Configuration Patterns</h3>
+<span class="px-2 py-0.5 rounded bg-secondary/10 border border-secondary/20 text-secondary text-label-sm font-bold">98% Match</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-2">
+                            Summary of best practices for TLS termination, rate limiting, and annotation-based routing within enterprise clusters.
+                        </p>
+<div class="mt-auto flex items-center justify-between">
+<div class="flex gap-2">
+<span class="material-symbols-outlined text-on-surface-variant text-[18px]">forum</span>
+<span class="material-symbols-outlined text-on-surface-variant text-[18px]">article</span>
+</div>
+<span class="text-label-sm text-on-surface-variant opacity-60 italic">Updated 2h ago</span>
+</div>
+</div>
+<!-- Card 2 -->
+<div class="bg-surface-container micro-bevel p-stack-md rounded-xl hover:bg-surface-container-high transition-all cursor-pointer flex flex-col gap-3 group">
+<div class="flex justify-between items-start">
+<h3 class="font-title-lg text-title-lg text-primary leading-tight">V8 Engine JIT Optimization Research</h3>
+<span class="px-2 py-0.5 rounded bg-secondary/10 border border-secondary/20 text-secondary text-label-sm font-bold">92% Match</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-2">
+                            Deep dive into Crankshaft vs TurboFan architectures and how inline caching affects execution speed in Node.js.
+                        </p>
+<div class="mt-auto flex items-center justify-between">
+<div class="flex gap-2">
+<span class="material-symbols-outlined text-on-surface-variant text-[18px]">article</span>
+</div>
+<span class="text-label-sm text-on-surface-variant opacity-60 italic">Updated 1d ago</span>
+</div>
+</div>
+<!-- Card 3 -->
+<div class="bg-surface-container micro-bevel p-stack-md rounded-xl hover:bg-surface-container-high transition-all cursor-pointer flex flex-col gap-3 group">
+<div class="flex justify-between items-start">
+<h3 class="font-title-lg text-title-lg text-primary leading-tight">Personal Workout Schedule: Q3 Hybrid Plan</h3>
+<span class="px-2 py-0.5 rounded bg-secondary/10 border border-secondary/20 text-secondary text-label-sm font-bold">100% Match</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-2">
+                            Integrated strength and endurance cycle focusing on progressive overload and mobility routines.
+                        </p>
+<div class="mt-auto flex items-center justify-between">
+<div class="flex gap-2">
+<span class="material-symbols-outlined text-on-surface-variant text-[18px]">forum</span>
+</div>
+<span class="text-label-sm text-on-surface-variant opacity-60 italic">Updated 3d ago</span>
+</div>
+</div>
+<!-- Card 4 -->
+<div class="bg-surface-container micro-bevel p-stack-md rounded-xl hover:bg-surface-container-high transition-all cursor-pointer flex flex-col gap-3 group">
+<div class="flex justify-between items-start">
+<h3 class="font-title-lg text-title-lg text-primary leading-tight">Rust Memory Safety &amp; Ownership Models</h3>
+<span class="px-2 py-0.5 rounded bg-secondary/10 border border-secondary/20 text-secondary text-label-sm font-bold">85% Match</span>
+</div>
+<p class="font-body-md text-body-md text-on-surface-variant line-clamp-2">
+                            Comparative analysis between garbage collection and borrow checking for systems-level programming performance.
+                        </p>
+<div class="mt-auto flex items-center justify-between">
+<div class="flex gap-2">
+<span class="material-symbols-outlined text-on-surface-variant text-[18px]">article</span>
+<span class="material-symbols-outlined text-on-surface-variant text-[18px]">link</span>
+</div>
+<span class="text-label-sm text-on-surface-variant opacity-60 italic">Updated 1w ago</span>
+</div>
+</div>
+</section>
+<!-- Timeline View -->
+<section class="flex flex-col gap-stack-lg pb-10">
+<h3 class="font-title-lg text-title-lg text-primary">History Timeline</h3>
+<div class="relative pl-8 border-l border-outline-variant/20 flex flex-col gap-stack-xl">
+<!-- Timeline Point 1 -->
+<div class="relative">
+<div class="absolute -left-[41px] top-1 h-4 w-4 rounded-full bg-secondary shadow-[0_0_10px_rgba(192,193,255,0.4)] border-4 border-background"></div>
+<div class="flex flex-col gap-2">
+<span class="text-label-sm text-secondary font-bold uppercase tracking-widest">Today, 14:20</span>
+<div class="bg-surface-container-low border border-outline-variant/10 p-3 rounded-lg flex items-center gap-4">
+<span class="material-symbols-outlined text-primary">auto_fix_high</span>
+<div>
+<p class="text-body-md font-medium text-primary">Synthesized 'Kubernetes Networking' cluster</p>
+<p class="text-label-md text-on-surface-variant">Merged 4 related conversations into a long-term memory node.</p>
+</div>
+</div>
+</div>
+</div>
+<!-- Timeline Point 2 -->
+<div class="relative">
+<div class="absolute -left-[41px] top-1 h-4 w-4 rounded-full bg-outline-variant border-4 border-background"></div>
+<div class="flex flex-col gap-2">
+<span class="text-label-sm text-on-surface-variant font-bold uppercase tracking-widest">Yesterday, 09:12</span>
+<div class="bg-surface-container-low border border-outline-variant/10 p-3 rounded-lg flex items-center gap-4">
+<span class="material-symbols-outlined text-on-surface-variant">upload_file</span>
+<div>
+<p class="text-body-md font-medium text-on-surface">Ingested 'Project_Alpha_Specs.pdf'</p>
+<p class="text-label-md text-on-surface-variant">Extracted technical requirements and milestone dates.</p>
+</div>
+</div>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- Right Sidebar / Filter Panel -->
+<aside class="hidden xl:flex w-[320px] bg-surface-container-low/50 border-l border-outline-variant/10 flex-col p-stack-lg gap-stack-xl">
+<!-- Category Section -->
+<div class="flex flex-col gap-4">
+<h4 class="font-label-md text-label-md text-on-surface-variant uppercase tracking-widest px-2">Categories</h4>
+<div class="flex flex-col gap-1">
+<button class="flex items-center justify-between px-3 py-2 rounded-lg bg-surface-container text-primary border border-outline-variant/20">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[20px]">code</span>
+<span class="text-body-md">Technical</span>
+</div>
+<span class="text-label-sm opacity-60">128</span>
+</button>
+<button class="flex items-center justify-between px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-all">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[20px]">science</span>
+<span class="text-body-md">Research</span>
+</div>
+<span class="text-label-sm opacity-60">42</span>
+</button>
+<button class="flex items-center justify-between px-3 py-2 rounded-lg text-on-surface-variant hover:bg-surface-container-high transition-all">
+<div class="flex items-center gap-3">
+<span class="material-symbols-outlined text-[20px]">person</span>
+<span class="text-body-md">Personal</span>
+</div>
+<span class="text-label-sm opacity-60">15</span>
+</button>
+</div>
+</div>
+<!-- Tags Section -->
+<div class="flex flex-col gap-4">
+<h4 class="font-label-md text-label-md text-on-surface-variant uppercase tracking-widest px-2">Popular Tags</h4>
+<div class="flex flex-wrap gap-2 px-2">
+<span class="px-2 py-1 bg-surface-container border border-outline-variant/20 rounded text-label-sm text-on-surface-variant cursor-pointer hover:border-secondary transition-all">#kubernetes</span>
+<span class="px-2 py-1 bg-surface-container border border-outline-variant/20 rounded text-label-sm text-on-surface-variant cursor-pointer hover:border-secondary transition-all">#rust</span>
+<span class="px-2 py-1 bg-surface-container border border-outline-variant/20 rounded text-label-sm text-on-surface-variant cursor-pointer hover:border-secondary transition-all">#ai_ethics</span>
+<span class="px-2 py-1 bg-surface-container border border-outline-variant/20 rounded text-label-sm text-on-surface-variant cursor-pointer hover:border-secondary transition-all">#fitness</span>
+<span class="px-2 py-1 bg-surface-container border border-outline-variant/20 rounded text-label-sm text-on-surface-variant cursor-pointer hover:border-secondary transition-all">#roadmap</span>
+<span class="px-2 py-1 bg-surface-container border border-outline-variant/20 rounded text-label-sm text-on-surface-variant cursor-pointer hover:border-secondary transition-all">#performance</span>
+</div>
+</div>
+<!-- Frequent Section -->
+<div class="flex flex-col gap-4">
+<h4 class="font-label-md text-label-md text-on-surface-variant uppercase tracking-widest px-2">Frequent Access</h4>
+<div class="flex flex-col gap-3 px-2">
+<a class="group" href="#">
+<p class="text-body-md text-primary group-hover:text-secondary transition-all">Cloud Infrastructure Diagram v2</p>
+<p class="text-label-sm text-on-surface-variant opacity-60">Accessed 12 times this week</p>
+</a>
+<a class="group" href="#">
+<p class="text-body-md text-primary group-hover:text-secondary transition-all">API Rate Limit Strategy</p>
+<p class="text-label-sm text-on-surface-variant opacity-60">Accessed 8 times this week</p>
+</a>
+<a class="group" href="#">
+<p class="text-body-md text-primary group-hover:text-secondary transition-all">Daily Journal Prompt Archive</p>
+<p class="text-label-sm text-on-surface-variant opacity-60">Accessed 5 times this week</p>
+</a>
+</div>
+</div>
+<!-- Decoration / Visualization -->
+<div class="mt-auto h-48 relative rounded-xl overflow-hidden border border-outline-variant/10 bg-surface-container-lowest">
+
+<div class="absolute inset-0 bg-gradient-to-t from-background via-transparent to-transparent"></div>
+<div class="absolute bottom-4 left-4">
+<p class="text-label-sm font-bold text-secondary">Neural Density: High</p>
+<p class="text-[10px] text-on-surface-variant opacity-60">Updated Real-time</p>
+</div>
+</div>
+</aside>
+</div>
+</main>
+<!-- Floating Action Button -->
+<button class="fixed bottom-8 right-8 h-14 w-14 rounded-full bg-primary text-background shadow-2xl flex items-center justify-center hover:scale-105 active:scale-95 transition-all z-50">
+<span class="material-symbols-outlined text-[32px]" style="font-variation-settings: 'FILL' 1;">add</span>
+</button>
+<script>
+        // Micro-interactions and subtle scroll effects
+        document.addEventListener('DOMContentLoaded', () => {
+            const cards = document.querySelectorAll('.micro-bevel');
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', () => {
+                    card.style.transform = 'translateY(-2px)';
+                });
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = 'translateY(0)';
+                });
+            });
+        });
+    </script>
+</body></html>

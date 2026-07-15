@@ -1,0 +1,412 @@
+<!DOCTYPE html>
+
+<html class="dark" lang="en"><head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>RECALL | AI Search</title>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/>
+<style>
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: #0A0A0A;
+            color: #e5e2e1;
+            margin: 0;
+            overflow-x: hidden;
+        }
+        .material-symbols-outlined {
+            font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24;
+        }
+        .glass-panel {
+            background: rgba(23, 23, 23, 0.7);
+            backdrop-filter: blur(12px);
+            border: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .etched-border {
+            border: 1px solid rgba(255, 255, 255, 0.05);
+            border-top: 1px solid rgba(255, 255, 255, 0.1);
+        }
+        .ai-glow {
+            box-shadow: 0 0 20px rgba(59, 130, 246, 0.05);
+        }
+        ::-webkit-scrollbar {
+            width: 6px;
+        }
+        ::-webkit-scrollbar-track {
+            background: #0A0A0A;
+        }
+        ::-webkit-scrollbar-thumb {
+            background: #262626;
+            border-radius: 10px;
+        }
+    </style>
+<script id="tailwind-config">
+        tailwind.config = {
+          darkMode: "class",
+          theme: {
+            extend: {
+              "colors": {
+                "surface-variant": "#353534",
+                "surface-dim": "#131313",
+                "on-background": "#e5e2e1",
+                "secondary": "#c0c1ff",
+                "on-secondary-fixed-variant": "#2f2ebe",
+                "secondary-fixed": "#e1e0ff",
+                "secondary-container": "#3131c0",
+                "tertiary-fixed": "#e2e2e2",
+                "on-secondary": "#1000a9",
+                "outline-variant": "#444748",
+                "outline": "#8e9192",
+                "tertiary": "#ffffff",
+                "surface-tint": "#c6c6c7",
+                "inverse-on-surface": "#313030",
+                "primary-fixed": "#e2e2e2",
+                "inverse-surface": "#e5e2e1",
+                "inverse-primary": "#5d5f5f",
+                "surface-container-low": "#1c1b1b",
+                "surface": "#131313",
+                "on-error": "#690005",
+                "primary": "#ffffff",
+                "on-tertiary-fixed": "#1a1c1c",
+                "primary-container": "#e2e2e2",
+                "surface-container-lowest": "#0e0e0e",
+                "on-surface-variant": "#c4c7c8",
+                "tertiary-fixed-dim": "#c6c6c7",
+                "secondary-fixed-dim": "#c0c1ff",
+                "on-primary": "#2f3131",
+                "error": "#ffb4ab",
+                "primary-fixed-dim": "#c6c6c7",
+                "on-secondary-container": "#b0b2ff",
+                "on-surface": "#e5e2e1",
+                "surface-bright": "#3a3939",
+                "on-primary-fixed-variant": "#454747",
+                "surface-container-high": "#2a2a2a",
+                "on-tertiary-container": "#636565",
+                "error-container": "#93000a",
+                "on-secondary-fixed": "#07006c",
+                "tertiary-container": "#e2e2e2",
+                "on-primary-fixed": "#1a1c1c",
+                "on-primary-container": "#636565",
+                "on-error-container": "#ffdad6",
+                "surface-container": "#201f1f",
+                "background": "#131313",
+                "surface-container-highest": "#353534",
+                "on-tertiary": "#2f3131",
+                "on-tertiary-fixed-variant": "#454747"
+              },
+              "borderRadius": {
+                "DEFAULT": "0.125rem",
+                "lg": "0.25rem",
+                "xl": "0.5rem",
+                "full": "0.75rem"
+              },
+              "spacing": {
+                "stack-sm": "8px",
+                "stack-xs": "4px",
+                "stack-lg": "24px",
+                "stack-xl": "48px",
+                "gutter": "24px",
+                "stack-md": "16px",
+                "margin-x": "32px",
+                "container-max": "1280px"
+              },
+              "fontFamily": {
+                "body-md": ["Inter"],
+                "title-lg": ["Inter"],
+                "headline-lg": ["Inter"],
+                "display-lg": ["Inter"],
+                "label-md": ["Inter"],
+                "headline-md": ["Inter"],
+                "body-lg": ["Inter"]
+              },
+              "fontSize": {
+                "body-md": ["14px", {"lineHeight": "20px", "letterSpacing": "-0.006em", "fontWeight": "400"}],
+                "title-lg": ["18px", {"lineHeight": "28px", "letterSpacing": "-0.01em", "fontWeight": "500"}],
+                "headline-lg": ["32px", {"lineHeight": "40px", "letterSpacing": "-0.03em", "fontWeight": "600"}],
+                "display-lg": ["48px", {"lineHeight": "56px", "letterSpacing": "-0.04em", "fontWeight": "600"}],
+                "label-md": ["12px", {"lineHeight": "16px", "letterSpacing": "0.02em", "fontWeight": "500"}],
+                "headline-md": ["24px", {"lineHeight": "32px", "letterSpacing": "-0.02em", "fontWeight": "600"}],
+                "body-lg": ["16px", {"lineHeight": "24px", "letterSpacing": "-0.011em", "fontWeight": "400"}]
+              }
+            },
+          },
+        }
+    </script>
+</head>
+<body class="bg-background text-on-surface">
+<!-- SideNavBar Component -->
+<aside class="h-screen w-[280px] fixed left-0 top-0 border-r border-outline-variant/20 bg-surface-container-low flex flex-col z-50">
+<div class="p-stack-lg flex flex-col gap-1">
+<h1 class="text-headline-md font-headline-md font-extrabold text-primary tracking-tighter">RECALL</h1>
+<p class="text-label-md font-label-md text-on-surface-variant">AI productivity platform</p>
+</div>
+<nav class="flex-1 px-stack-sm mt-stack-md flex flex-col gap-1">
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-white/5 transition-all duration-200" href="#">
+<span class="material-symbols-outlined">add_box</span>
+<span class="text-body-md font-body-md">New Chat</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-white/5 transition-all duration-200" href="#">
+<span class="material-symbols-outlined">history</span>
+<span class="text-body-md font-body-md">Recent Chats</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-white/5 transition-all duration-200" href="#">
+<span class="material-symbols-outlined">account_balance_wallet</span>
+<span class="text-body-md font-body-md">Vault</span>
+</a>
+<!-- Active State for Search -->
+<a class="flex items-center gap-3 px-4 py-3 bg-white/5 border-l-2 border-primary text-primary font-bold" href="#">
+<span class="material-symbols-outlined">search</span>
+<span class="text-body-md font-body-md">Search</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-white/5 transition-all duration-200" href="#">
+<span class="material-symbols-outlined">psychology</span>
+<span class="text-body-md font-body-md">Memories</span>
+</a>
+<a class="flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:text-on-surface hover:bg-white/5 transition-all duration-200" href="#">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-body-md font-body-md">Settings</span>
+</a>
+</nav>
+<div class="p-stack-lg border-t border-outline-variant/10">
+<button class="w-full bg-primary text-on-primary py-3 px-4 rounded-lg font-bold text-body-md transition-transform active:scale-95 shadow-lg">
+                Upgrade to Pro
+            </button>
+<div class="mt-stack-lg flex items-center gap-3">
+<div class="w-10 h-10 rounded-full overflow-hidden bg-surface-container-high border border-outline-variant/20">
+<img class="w-full h-full object-cover" data-alt="A professional close-up studio portrait of a technology professional in their late 30s. The person has a kind, intelligent expression and is wearing modern, minimalist dark clothing. The lighting is soft and cinematic with subtle blue and indigo rim lighting to match the RECALL app's professional charcoal and slate aesthetic." src="https://lh3.googleusercontent.com/aida-public/AB6AXuAqIFSbnlNBc30PX00ZYS59c97gbyNx5pO1Bol5kZx2o1JCFArgb6mUiI7OguObrHYlrN0Y51Wn5xTFoRN_cbugnnwqFh_nsdKa1Gzpijt6sBzKHX_-Kz3ehjxLU57PrTclGVf1boflbBYPa9-NhY-iHUfwwdfaCiMJALm31mhFFwTOvtTUytMC5DOV8jes6arkfNcdSG4lE49Xu94-n-zergn31KfQk9sMiFEepBLSHHQZwHgPIn0zUi2qSCt5g2DNER01wkn6cu-d"/>
+</div>
+<div class="flex flex-col">
+<span class="text-label-md font-bold">Alex Rivera</span>
+<span class="text-[10px] text-on-surface-variant tracking-wider uppercase">Senior Developer</span>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Canvas -->
+<main class="ml-[280px] min-h-screen">
+<!-- TopNavBar Component -->
+<header class="fixed top-0 right-0 w-[calc(100%-280px)] z-40 flex justify-between items-center h-16 px-gutter bg-surface/80 backdrop-blur-md border-b border-outline-variant/10">
+<div class="flex items-center gap-4">
+<span class="text-title-lg font-title-lg font-bold text-primary">RECALL</span>
+</div>
+<div class="flex items-center gap-6">
+<div class="flex items-center gap-4 text-on-surface-variant">
+<button class="material-symbols-outlined hover:text-primary transition-colors">notifications</button>
+<button class="material-symbols-outlined hover:text-primary transition-colors">help_outline</button>
+</div>
+</div>
+</header>
+<!-- Search Content Area -->
+<div class="pt-24 pb-stack-xl px-gutter max-w-container-max mx-auto">
+<!-- Header Section -->
+<div class="text-center mb-stack-xl">
+<h2 class="text-display-lg font-display-lg text-primary mb-2">AI Search</h2>
+<p class="text-body-lg text-on-surface-variant">Find anything across your knowledge base.</p>
+</div>
+<!-- Central Search Bar -->
+<div class="max-w-3xl mx-auto mb-stack-xl">
+<div class="relative group">
+<div class="absolute inset-0 bg-secondary/10 blur-xl opacity-0 group-focus-within:opacity-100 transition-opacity duration-500"></div>
+<div class="relative flex items-center glass-panel rounded-full px-6 py-4 ai-glow focus-within:border-primary/30 transition-all">
+<span class="material-symbols-outlined text-secondary mr-4" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+<input class="bg-transparent border-none focus:ring-0 w-full text-body-lg text-primary placeholder:text-on-surface-variant/50" placeholder="What would you like to find? (e.g., 'What did I learn about Kubernetes?')" type="text" value="What did I learn about Kubernetes?"/>
+<button class="bg-primary text-on-primary p-2 rounded-full flex items-center justify-center hover:scale-105 active:scale-95 transition-transform">
+<span class="material-symbols-outlined">arrow_forward</span>
+</button>
+</div>
+</div>
+<!-- Filter Chips -->
+<div class="flex flex-wrap justify-center gap-2 mt-stack-md">
+<button class="px-4 py-1.5 rounded-full text-label-md font-label-md bg-primary text-on-primary border border-primary/20">All</button>
+<button class="px-4 py-1.5 rounded-full text-label-md font-label-md bg-surface-container hover:bg-surface-container-high text-on-surface-variant transition-colors border border-outline-variant/10">Conversations</button>
+<button class="px-4 py-1.5 rounded-full text-label-md font-label-md bg-surface-container hover:bg-surface-container-high text-on-surface-variant transition-colors border border-outline-variant/10">Documents</button>
+<button class="px-4 py-1.5 rounded-full text-label-md font-label-md bg-surface-container hover:bg-surface-container-high text-on-surface-variant transition-colors border border-outline-variant/10">Memories</button>
+<button class="px-4 py-1.5 rounded-full text-label-md font-label-md bg-surface-container hover:bg-surface-container-high text-on-surface-variant transition-colors border border-outline-variant/10">Summaries</button>
+</div>
+</div>
+<!-- Results Grid -->
+<div class="grid grid-cols-12 gap-gutter">
+<!-- Left: Main Results -->
+<div class="col-span-12 lg:col-span-8 flex flex-col gap-stack-lg">
+<!-- AI Answer Card -->
+<section class="glass-panel rounded-xl p-stack-lg etched-border overflow-hidden relative">
+<div class="absolute top-0 right-0 p-4 opacity-10 pointer-events-none">
+<span class="material-symbols-outlined text-[80px]" style="font-variation-settings: 'FILL' 1;">psychology</span>
+</div>
+<div class="flex items-center gap-2 mb-stack-md">
+<span class="material-symbols-outlined text-secondary text-sm" style="font-variation-settings: 'FILL' 1;">spark</span>
+<h3 class="text-label-md font-bold text-secondary uppercase tracking-widest">AI Insight</h3>
+</div>
+<div class="space-y-4">
+<p class="text-body-lg text-primary leading-relaxed">
+                                You've primarily explored Kubernetes through the lens of **cluster orchestration and service meshes**. Your notes highlight that Kubernetes is not just for container deployment but for managing the lifecycle of complex microservices. 
+                            </p>
+<p class="text-body-md text-on-surface-variant leading-relaxed">
+                                Key takeaways from your recent vault entries:
+                            </p>
+<ul class="space-y-3">
+<li class="flex gap-3">
+<span class="text-secondary mt-1">•</span>
+<span><strong class="text-primary">Control Plane Architecture:</strong> You noted the importance of etcd consistency in high-availability setups <sup class="text-secondary cursor-pointer hover:underline">[1]</sup>.</span>
+</li>
+<li class="flex gap-3">
+<span class="text-secondary mt-1">•</span>
+<span><strong class="text-primary">Networking:</strong> You compared CNI providers, specifically focusing on Cilium's eBPF capabilities for better observability <sup class="text-secondary cursor-pointer hover:underline">[2]</sup>.</span>
+</li>
+</ul>
+</div>
+<div class="mt-stack-lg pt-stack-md border-t border-outline-variant/10 flex items-center justify-between">
+<div class="flex gap-4">
+<button class="text-label-md text-on-surface-variant hover:text-primary flex items-center gap-1 transition-colors">
+<span class="material-symbols-outlined text-sm">thumb_up</span> Helpful
+                                </button>
+<button class="text-label-md text-on-surface-variant hover:text-primary flex items-center gap-1 transition-colors">
+<span class="material-symbols-outlined text-sm">content_copy</span> Copy
+                                </button>
+</div>
+<span class="text-label-sm text-outline">Generated in 1.2s</span>
+</div>
+</section>
+<!-- Documents Grid -->
+<section>
+<div class="flex items-center justify-between mb-stack-md">
+<h3 class="text-title-lg font-title-lg text-primary">Related Documents</h3>
+<button class="text-label-md text-secondary hover:underline">View All</button>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-4">
+<!-- Doc 1 -->
+<div class="glass-panel p-4 rounded-lg etched-border hover:bg-white/5 transition-all cursor-pointer group">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded bg-surface-container-high flex items-center justify-center text-error border border-error/20">
+<span class="material-symbols-outlined">picture_as_pdf</span>
+</div>
+<div class="flex-1 overflow-hidden">
+<h4 class="text-body-md font-bold text-primary truncate">K8s_Best_Practices.pdf</h4>
+<p class="text-label-md text-on-surface-variant">Updated 2 days ago • 4.2 MB</p>
+</div>
+<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors">open_in_new</span>
+</div>
+</div>
+<!-- Doc 2 -->
+<div class="glass-panel p-4 rounded-lg etched-border hover:bg-white/5 transition-all cursor-pointer group">
+<div class="flex items-center gap-4">
+<div class="w-12 h-12 rounded bg-surface-container-high flex items-center justify-center text-secondary border border-secondary/20">
+<span class="material-symbols-outlined">description</span>
+</div>
+<div class="flex-1 overflow-hidden">
+<h4 class="text-body-md font-bold text-primary truncate">Deployment_Notes.md</h4>
+<p class="text-label-md text-on-surface-variant">Updated May 12 • 12 KB</p>
+</div>
+<span class="material-symbols-outlined text-outline group-hover:text-primary transition-colors">open_in_new</span>
+</div>
+</div>
+</div>
+</section>
+<!-- Conversations -->
+<section>
+<h3 class="text-title-lg font-title-lg text-primary mb-stack-md">Conversations</h3>
+<div class="flex flex-col gap-3">
+<div class="bg-surface-container-low p-4 rounded-xl etched-border hover:bg-surface-container transition-colors cursor-pointer">
+<div class="flex justify-between items-start mb-2">
+<h4 class="text-body-lg font-bold text-primary">Kubernetes Networking Review</h4>
+<span class="text-label-sm px-2 py-0.5 rounded bg-surface-container-highest text-outline">12 Messages</span>
+</div>
+<p class="text-body-md text-on-surface-variant line-clamp-2">
+                                    "Let's look at the ingress controller configuration. We should probably use Nginx for the staging environment but consider Istio for production..."
+                                </p>
+<div class="mt-stack-md flex items-center gap-2">
+<div class="w-6 h-6 rounded-full bg-secondary-container text-secondary flex items-center justify-center text-[10px]">AI</div>
+<span class="text-label-sm text-outline">Yesterday at 4:30 PM</span>
+</div>
+</div>
+</div>
+</section>
+</div>
+<!-- Right: Insights & Metadata -->
+<div class="col-span-12 lg:col-span-4 flex flex-col gap-stack-lg">
+<!-- Related Topics -->
+<div class="glass-panel rounded-xl p-stack-lg etched-border">
+<h3 class="text-label-md font-bold text-primary mb-stack-md uppercase tracking-wider">Related Topics</h3>
+<div class="flex flex-wrap gap-2">
+<span class="px-3 py-1.5 rounded-lg bg-surface-container-highest text-body-md text-primary border border-outline-variant/10 hover:border-secondary transition-colors cursor-pointer">Docker</span>
+<span class="px-3 py-1.5 rounded-lg bg-surface-container-highest text-body-md text-primary border border-outline-variant/10 hover:border-secondary transition-colors cursor-pointer">Microservices</span>
+<span class="px-3 py-1.5 rounded-lg bg-surface-container-highest text-body-md text-primary border border-outline-variant/10 hover:border-secondary transition-colors cursor-pointer">Cloud Native</span>
+<span class="px-3 py-1.5 rounded-lg bg-surface-container-highest text-body-md text-primary border border-outline-variant/10 hover:border-secondary transition-colors cursor-pointer">DevOps</span>
+<span class="px-3 py-1.5 rounded-lg bg-surface-container-highest text-body-md text-primary border border-outline-variant/10 hover:border-secondary transition-colors cursor-pointer">Terraform</span>
+</div>
+</div>
+<!-- Search Insights (Bento Style) -->
+<div class="grid grid-cols-2 gap-4">
+<div class="glass-panel p-4 rounded-xl etched-border flex flex-col items-center text-center">
+<span class="material-symbols-outlined text-secondary mb-2">psychology</span>
+<span class="text-headline-md font-bold text-primary">14</span>
+<span class="text-label-sm text-outline">Memories linked</span>
+</div>
+<div class="glass-panel p-4 rounded-xl etched-border flex flex-col items-center text-center">
+<span class="material-symbols-outlined text-primary mb-2">history</span>
+<span class="text-headline-md font-bold text-primary">8</span>
+<span class="text-label-sm text-outline">Prev. searches</span>
+</div>
+</div>
+<!-- Visual Asset Placeholder -->
+<div class="relative h-64 rounded-xl overflow-hidden etched-border">
+<img class="w-full h-full object-cover" data-alt="A highly detailed 3D visualization of a neural network or knowledge graph where interconnected nodes represent data points. The nodes glow with soft blue and indigo lights against a deep charcoal background. The aesthetic is clean, technical, and professional, mimicking a high-end data analytics dashboard. Cinematic lighting highlights the complex web of connections, suggesting an intelligent organization of information." src="https://lh3.googleusercontent.com/aida-public/AB6AXuASr4eFcJgqX-pMBt52ewqijieX_Wv_JIc2gO-So4ejEWalCaV7clQjbF1ChRS80Q77ZgJ9e_z6ddjNMp1thlrdr8fW5UVhvrBkBJXfTtpCbXm3q6LliuvtHhurylNY_Ds985kN9A00gVR9SECSKcPx_YmhzQNhcwMlO1eqUPrj-9lWrrm4WgeJnAFAw5nqTd_h0j4nAc6hd5pyhIjmtxz88fPKPW8cHsUCAiU50-0NSB28eI9RhcxWN7418cEXcyV3WZ8rategcVVm"/>
+<div class="absolute inset-0 bg-gradient-to-t from-background to-transparent opacity-60"></div>
+<div class="absolute bottom-4 left-4 right-4">
+<p class="text-label-md font-bold text-primary">Knowledge Graph</p>
+<p class="text-label-sm text-on-surface-variant">Visualizing connections for "Kubernetes"</p>
+</div>
+</div>
+<!-- Recent Searches -->
+<div class="glass-panel rounded-xl p-stack-lg etched-border">
+<h3 class="text-label-md font-bold text-primary mb-stack-md uppercase tracking-wider">Recent Searches</h3>
+<div class="space-y-3">
+<div class="flex items-center gap-3 text-body-md text-on-surface-variant hover:text-primary cursor-pointer transition-colors">
+<span class="material-symbols-outlined text-sm">history</span>
+<span>React server components...</span>
+</div>
+<div class="flex items-center gap-3 text-body-md text-on-surface-variant hover:text-primary cursor-pointer transition-colors">
+<span class="material-symbols-outlined text-sm">history</span>
+<span>Design system principles</span>
+</div>
+<div class="flex items-center gap-3 text-body-md text-on-surface-variant hover:text-primary cursor-pointer transition-colors">
+<span class="material-symbols-outlined text-sm">history</span>
+<span>Rust memory safety</span>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+</main>
+<!-- Micro-interaction Scripts -->
+<script>
+        document.addEventListener('DOMContentLoaded', () => {
+            const searchInput = document.querySelector('input');
+            const searchContainer = searchInput.closest('.glass-panel');
+
+            searchInput.addEventListener('focus', () => {
+                searchContainer.classList.add('border-primary/40');
+                searchContainer.classList.add('scale-[1.01]');
+            });
+
+            searchInput.addEventListener('blur', () => {
+                searchContainer.classList.remove('border-primary/40');
+                searchContainer.classList.remove('scale-[1.01]');
+            });
+
+            // Hover effects for cards
+            const cards = document.querySelectorAll('.glass-panel');
+            cards.forEach(card => {
+                card.addEventListener('mouseenter', () => {
+                    card.style.transform = 'translateY(-2px)';
+                });
+                card.addEventListener('mouseleave', () => {
+                    card.style.transform = 'translateY(0)';
+                });
+            });
+        });
+    </script>
+</body></html>

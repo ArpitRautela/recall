@@ -1,0 +1,348 @@
+<!DOCTYPE html><html lang="en" class="dark" style="width: 1280px; height: 1024px; overflow: hidden; position: relative;"><head><meta charset="UTF-8"><meta name="viewport" content="width=device-width, initial-scale=1.0"><link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&amp;family=JetBrains+Mono:wght@400;500&amp;display=swap" rel="stylesheet"><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=block" rel="stylesheet"><script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script><script id="tailwind-config">try{
+        tailwind.config = {
+            darkMode: "class",
+            theme: {
+                extend: {
+                    "colors": {
+                        "secondary-fixed": "#e1e0ff",
+                        "tertiary": "#ffffff",
+                        "surface-container-highest": "#353534",
+                        "secondary-fixed-dim": "#c0c1ff",
+                        "on-tertiary": "#2f3131",
+                        "secondary": "#c0c1ff",
+                        "outline-variant": "#444748",
+                        "tertiary-container": "#e2e2e2",
+                        "on-primary-fixed-variant": "#454747",
+                        "on-primary-container": "#636565",
+                        "surface-container": "#201f1f",
+                        "surface-bright": "#3a3939",
+                        "tertiary-fixed": "#e2e2e2",
+                        "on-secondary": "#1000a9",
+                        "on-surface": "#e5e2e1",
+                        "surface-variant": "#353534",
+                        "primary-fixed-dim": "#c6c6c7",
+                        "on-primary": "#2f3131",
+                        "secondary-container": "#3131c0",
+                        "surface-container-low": "#1c1b1b",
+                        "surface-dim": "#131313",
+                        "error": "#ffb4ab",
+                        "on-secondary-container": "#b0b2ff",
+                        "on-error-container": "#ffdad6",
+                        "primary-container": "#e2e2e2",
+                        "on-surface-variant": "#c4c7c8",
+                        "surface-container-lowest": "#0e0e0e",
+                        "on-tertiary-fixed-variant": "#454747",
+                        "tertiary-fixed-dim": "#c6c6c7",
+                        "on-tertiary-fixed": "#1a1c1c",
+                        "background": "#131313",
+                        "on-background": "#e5e2e1",
+                        "on-tertiary-container": "#636565",
+                        "primary": "#ffffff",
+                        "on-error": "#690005",
+                        "inverse-primary": "#5d5f5f",
+                        "inverse-on-surface": "#313030",
+                        "error-container": "#93000a",
+                        "surface": "#131313",
+                        "inverse-surface": "#e5e2e1",
+                        "primary-fixed": "#e2e2e2",
+                        "surface-container-high": "#2a2a2a",
+                        "outline": "#8e9192",
+                        "on-secondary-fixed-variant": "#2f2ebe",
+                        "on-primary-fixed": "#1a1c1c",
+                        "surface-tint": "#c6c6c7",
+                        "on-secondary-fixed": "#07006c"
+                    },
+                    "borderRadius": {
+                        "DEFAULT": "0.125rem",
+                        "lg": "0.25rem",
+                        "xl": "0.5rem",
+                        "full": "0.75rem"
+                    },
+                    "spacing": {
+                        "stack-xs": "4px",
+                        "stack-lg": "24px",
+                        "stack-md": "16px",
+                        "container-max": "1280px",
+                        "gutter": "24px",
+                        "stack-sm": "8px",
+                        "stack-xl": "48px",
+                        "margin-x": "32px"
+                    },
+                    "fontFamily": {
+                        "headline-md": ["Inter"],
+                        "title-lg": ["Inter"],
+                        "body-md": ["Inter"],
+                        "label-md": ["Inter"],
+                        "mono": ["JetBrains Mono"]
+                    }
+                }
+            }
+        }
+    }catch(_e){}</script><meta charset="utf-8"></head><body class="h-screen flex overflow-hidden">
+<!-- Persistent SideNavBar -->
+<aside class="flex flex-col h-full border-r border-outline-variant/20 bg-surface-container-low h-screen w-[280px] fixed left-0 top-0 z-50">
+<div class="p-6">
+<h1 class="text-headline-md font-headline-md font-extrabold text-primary tracking-tighter">RECALL</h1>
+<p class="text-label-md font-label-md opacity-50">AI productivity platform</p>
+</div>
+<nav class="flex-1 px-3 space-y-1">
+<button class="w-full flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-white/5 hover:text-primary transition-all duration-200 group">
+<span class="material-symbols-outlined">add_box</span>
+<span class="text-label-md font-label-md">New Chat</span>
+</button>
+<button class="w-full flex items-center gap-3 px-4 py-3 bg-white/5 border-l-2 border-primary text-primary font-bold transition-transform scale-[0.98]">
+<span class="material-symbols-outlined">history</span>
+<span class="text-label-md font-label-md">Recent Chats</span>
+</button>
+<button class="w-full flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-white/5 hover:text-primary transition-all duration-200">
+<span class="material-symbols-outlined">account_balance_wallet</span>
+<span class="text-label-md font-label-md">Vault</span>
+</button>
+<button class="w-full flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-white/5 hover:text-primary transition-all duration-200">
+<span class="material-symbols-outlined">search</span>
+<span class="text-label-md font-label-md">Search</span>
+</button>
+<button class="w-full flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-white/5 hover:text-primary transition-all duration-200">
+<span class="material-symbols-outlined">psychology</span>
+<span class="text-label-md font-label-md">Memories</span>
+</button>
+<button class="w-full flex items-center gap-3 px-4 py-3 text-on-surface-variant hover:bg-white/5 hover:text-primary transition-all duration-200">
+<span class="material-symbols-outlined">settings</span>
+<span class="text-label-md font-label-md">Settings</span>
+</button>
+</nav>
+<div class="p-4 mt-auto">
+<button class="w-full py-3 bg-primary text-on-primary font-bold rounded-lg hover:opacity-90 transition-opacity flex items-center justify-center gap-2">
+<span class="material-symbols-outlined text-[20px]" style="font-variation-settings: 'FILL' 1;">bolt</span>
+                Upgrade to Pro
+            </button>
+<div class="mt-6 flex items-center gap-3 px-2">
+<img class="w-8 h-8 rounded-full bg-surface-container-highest object-cover" data-alt="Close-up professional portrait of a tech executive in a dark minimalist studio, soft dramatic rim lighting, cinematic 8k quality, sharp focus on eyes, wearing a dark turtleneck." src="https://lh3.googleusercontent.com/aida-public/AB6AXuARkLtWuc07wHCfb93C9rsSAJ7BvHRnB2-1PeYO8Peu0XMu_mlVmt4-iOWwVr5Rwb9hquB2eHjAJWcBqbq93hvKFiLBR2VJ25gJBV_BN2tb9_bbrY9iCbJeUwICiGm1BX7rB0b6V2Izp7R9WfYSexWDp9J5pRkqUSE7SGz14tA1_MspsKzf-QcpRNqfef8Zp9iqb4_QrS1FHBPbqctXiwv23XVocioCinUo-BS1E7EX0lT97fT54eGM0ZP31y99Dz9En6_FmHTlIl0X">
+<div class="flex-1 overflow-hidden">
+<p class="text-label-md font-bold truncate">Alex Rivera</p>
+<p class="text-[10px] opacity-40 uppercase tracking-widest">Free Plan</p>
+</div>
+</div>
+</div>
+</aside>
+<!-- Main Workspace -->
+<main class="flex-1 ml-[280px] flex flex-col h-screen relative bg-background">
+<!-- Chat Header -->
+<header class="h-16 flex items-center justify-between px-gutter border-b border-outline-variant/10 bg-surface/80 backdrop-blur-md z-40 sticky top-0">
+<div class="flex items-center gap-4">
+<div>
+<h2 class="text-title-lg font-title-lg font-bold text-primary">Spring AI Agent Architecture</h2>
+<div class="flex items-center gap-3 mt-0.5">
+<span class="flex items-center gap-1.5 px-2 py-0.5 bg-secondary/10 text-secondary text-[11px] font-bold rounded border border-secondary/20">
+<span class="material-symbols-outlined text-[14px]" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+                            GPT-4o
+                        </span>
+<span class="text-[11px] text-on-surface-variant flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px]">description</span>
+                            3 files
+                        </span>
+</div>
+</div>
+</div>
+<div class="flex items-center gap-2">
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">share</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors">
+<span class="material-symbols-outlined">download</span>
+</button>
+<div class="h-6 w-[1px] bg-outline-variant/20 mx-2"></div>
+<button class="p-2 text-on-surface-variant hover:text-primary transition-colors" onclick="toggleContextPanel()">
+<span class="material-symbols-outlined">dock_to_right</span>
+</button>
+</div>
+</header>
+<!-- Message Area -->
+<div class="flex-1 overflow-y-auto p-gutter space-y-8 scrollbar-hide pb-40">
+<!-- User Message -->
+<div class="flex justify-end">
+<div class="max-w-[80%] bg-surface-container-high etched-border p-4 rounded-2xl rounded-tr-none">
+<p class="text-body-md font-body-md text-on-surface">
+                        Can you summarize the core logic of the backend PRD and how it relates to our memory stack?
+                    </p>
+</div>
+</div>
+<!-- AI Response -->
+<div class="flex gap-4">
+<div class="w-8 h-8 rounded bg-primary/10 flex items-center justify-center flex-shrink-0 border border-primary/20">
+<span class="material-symbols-outlined text-primary text-[20px]" style="font-variation-settings: 'FILL' 1;">smart_toy</span>
+</div>
+<div class="flex-1 space-y-4">
+<div class="text-body-md font-body-md text-on-surface space-y-4 max-w-[90%]">
+<p class="">Based on the <strong>Backend_PRD.pdf</strong> and current memory architecture, the core logic focuses on a decoupled agent-controller pattern. Here's the breakdown:</p>
+<div class="grid grid-cols-1 md:grid-cols-2 gap-3 my-4">
+<div class="p-4 bg-surface-container-low etched-border rounded-lg">
+<h4 class="text-label-md font-bold text-secondary mb-1">Controller Logic</h4>
+<p class="text-xs opacity-70">Manages the state machine and routes tool execution requests via the Spring AI context.</p>
+</div>
+<div class="p-4 bg-surface-container-low etched-border rounded-lg">
+<h4 class="text-label-md font-bold text-secondary mb-1">Memory Integration</h4>
+<p class="text-xs opacity-70">Leverages the Vector Store for long-term retrieval and Redis for short-term session state [1].</p>
+</div>
+</div>
+<p class="">The relationship to our memory stack is defined in the <code>MemoryService</code>. It utilizes a sliding window for context management before committing finalized turns to the persistent store [2].</p>
+<div class="bg-surface-container-lowest etched-border rounded-lg p-4 font-mono text-[13px] leading-relaxed relative group">
+<div class="absolute right-3 top-3 opacity-0 group-hover:opacity-100 transition-opacity">
+<button class="p-1.5 bg-surface-container hover:bg-surface-bright rounded border border-outline-variant/30 text-xs">Copy</button>
+</div>
+<pre class="text-on-surface-variant overflow-x-auto"><span class="text-secondary">@Service</span>
+<span class="text-primary">public class</span> <span class="text-secondary">AgentMemoryBridge</span> {
+    
+    <span class="text-secondary">private final</span> VectorStore vectorStore;
+    
+    <span class="text-primary">public</span> <span class="text-secondary">void</span> <span class="text-on-primary-container">syncToLongTerm</span>(String sessionId) {
+        <span class="text-on-primary-container">// Core logic from PRD Section 4.2</span>
+        List&lt;Document&gt; docs = fetchBuffer(sessionId);
+        vectorStore.add(docs);
+    }
+}</pre>
+</div>
+<div class="flex gap-2 mt-4">
+<span class="px-2 py-1 bg-surface-container-high text-[10px] text-outline rounded flex items-center gap-1 cursor-help hover:text-on-surface transition-colors">
+                                [1] PRD v1.4 pg 12
+                            </span>
+<span class="px-2 py-1 bg-surface-container-high text-[10px] text-outline rounded flex items-center gap-1 cursor-help hover:text-on-surface transition-colors">
+                                [2] Architecture_Doc pg 4
+                            </span>
+</div>
+</div>
+</div>
+</div>
+<!-- Typing Indicator (Simulated) -->
+<div class="flex gap-4 opacity-60" id="typing-indicator">
+<div class="w-8 h-8 rounded bg-surface-container flex items-center justify-center flex-shrink-0 border border-outline-variant/20">
+<span class="material-symbols-outlined text-[18px]">smart_toy</span>
+</div>
+<div class="flex items-center gap-1 h-8">
+<div class="w-1.5 h-1.5 bg-on-surface-variant rounded-full typing-dot"></div>
+<div class="w-1.5 h-1.5 bg-on-surface-variant rounded-full typing-dot"></div>
+<div class="w-1.5 h-1.5 bg-on-surface-variant rounded-full typing-dot"></div>
+</div>
+</div>
+</div>
+<!-- Chat Composer Area -->
+<div class="absolute bottom-0 left-0 right-0 p-gutter bg-gradient-to-t from-background via-background to-transparent pt-12">
+<div class="max-w-4xl mx-auto space-y-3">
+<!-- Context Pills -->
+<div class="flex gap-2 ml-4">
+<div class="flex items-center gap-2 px-3 py-1.5 bg-surface-container-high etched-border rounded-full text-[12px] text-on-surface group">
+<span class="material-symbols-outlined text-[16px] text-secondary">description</span>
+                        Backend_PRD.pdf
+                        <button class="hover:text-error transition-colors"><span class="material-symbols-outlined text-[14px]">close</span></button>
+</div>
+<div class="flex items-center gap-2 px-3 py-1.5 bg-surface-container-high etched-border rounded-full text-[12px] text-on-surface">
+<span class="material-symbols-outlined text-[16px] text-secondary">psychology</span>
+                        Memory: Spring AI
+                        <button class="hover:text-error transition-colors"><span class="material-symbols-outlined text-[14px]">close</span></button>
+</div>
+</div>
+<!-- Input Box -->
+<div class="relative bg-surface-container etched-border rounded-2xl p-2 focus-within:ring-2 focus-within:ring-secondary/20 transition-all shadow-2xl">
+<textarea class="w-full bg-transparent border-none focus:ring-0 text-body-md py-3 px-4 resize-none h-[56px] scrollbar-hide" placeholder="Ask about the memory stack or PRD details..." rows="1"></textarea>
+<div class="flex items-center justify-between px-2 pb-1">
+<div class="flex items-center gap-1">
+<button class="p-2 text-on-surface-variant hover:bg-white/5 rounded-lg transition-colors flex items-center gap-2 text-label-md">
+<span class="material-symbols-outlined text-[20px]">attach_file</span>
+<span class="hidden sm:inline">Attach</span>
+</button>
+<button class="p-2 text-on-surface-variant hover:bg-white/5 rounded-lg transition-colors flex items-center gap-2 text-label-md">
+<span class="material-symbols-outlined text-[20px]">alternate_email</span>
+<span class="hidden sm:inline">Mention</span>
+</button>
+</div>
+<button class="bg-primary text-on-primary p-2.5 rounded-xl hover:opacity-90 transition-all active:scale-95 flex items-center justify-center">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">send</span>
+</button>
+</div>
+</div>
+<p class="text-center text-[10px] opacity-30 uppercase tracking-widest pb-2">GPT-4o can make mistakes. Verify important info.</p>
+</div>
+</div>
+</main>
+<!-- Collapsible Right Context Panel -->
+<aside class="w-[340px] h-screen glass-panel flex flex-col transition-all duration-300 transform translate-x-0" id="context-panel">
+<div class="h-16 flex items-center justify-between px-6 border-b border-outline-variant/10">
+<h3 class="text-label-md font-bold uppercase tracking-wider text-secondary">Context Panel</h3>
+<button class="text-on-surface-variant hover:text-primary" onclick="toggleContextPanel()">
+<span class="material-symbols-outlined">close</span>
+</button>
+</div>
+<div class="flex-1 overflow-y-auto p-6 space-y-8 scrollbar-hide">
+<!-- Connected Knowledge -->
+<section>
+<div class="flex items-center justify-between mb-4">
+<h4 class="text-label-sm uppercase tracking-widest opacity-50">Connected Knowledge</h4>
+<button class="text-secondary text-[11px] font-bold hover:underline">Add Source</button>
+</div>
+<div class="space-y-3">
+<div class="p-3 bg-surface-container-low etched-border rounded-lg flex items-center gap-3 group hover:bg-surface-container transition-colors cursor-pointer">
+<div class="w-10 h-10 bg-error/10 text-error rounded flex items-center justify-center">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">picture_as_pdf</span>
+</div>
+<div class="flex-1 min-w-0">
+<p class="text-body-md font-medium truncate">Backend_PRD.pdf</p>
+<p class="text-[11px] opacity-40">Modified 2h ago • 1.2 MB</p>
+</div>
+<button class="opacity-0 group-hover:opacity-100 p-1 hover:text-error transition-all ml-auto"><span class="material-symbols-outlined text-[18px]">close</span></button></div>
+<div class="p-3 bg-surface-container-low etched-border rounded-lg flex items-center gap-3 group hover:bg-surface-container transition-colors cursor-pointer">
+<div class="w-10 h-10 bg-secondary/10 text-secondary rounded flex items-center justify-center">
+<span class="material-symbols-outlined" style="font-variation-settings: 'FILL' 1;">database</span>
+</div>
+<div class="flex-1 min-w-0">
+<p class="text-body-md font-medium truncate">Memory: Vector Store</p>
+<p class="text-[11px] opacity-40">Pinecone Cluster • Live Sync</p>
+</div>
+<button class="opacity-0 group-hover:opacity-100 p-1 hover:text-error transition-all ml-auto"><span class="material-symbols-outlined text-[18px]">close</span></button></div>
+</div>
+</section>
+<!-- Conversation Summary -->
+<section></section>
+<!-- Quick Actions -->
+<section></section>
+</div>
+<div class="p-6 border-t border-outline-variant/10">
+<div class="flex items-center gap-3 opacity-60 hover:opacity-100 transition-opacity cursor-pointer">
+<span class="material-symbols-outlined text-[18px]">info</span>
+<span class="text-label-md">How context works</span>
+</div>
+</div>
+</aside>
+<script>
+        function toggleContextPanel() {
+            const panel = document.getElementById('context-panel');
+            if (panel.classList.contains('translate-x-0')) {
+                panel.classList.remove('translate-x-0');
+                panel.classList.add('translate-x-full');
+                panel.style.width = '0px';
+                panel.style.opacity = '0';
+            } else {
+                panel.classList.add('translate-x-0');
+                panel.classList.remove('translate-x-full');
+                panel.style.width = '340px';
+                panel.style.opacity = '1';
+            }
+        }
+
+        // Simple interaction for textarea auto-resize
+        const tx = document.getElementsByTagName("textarea");
+        for (let i = 0; i < tx.length; i++) {
+            tx[i].setAttribute("style", "height:" + (tx[i].scrollHeight) + "px;overflow-y:hidden;");
+            tx[i].addEventListener("input", OnInput, false);
+        }
+
+        function OnInput() {
+            this.style.height = 0;
+            this.style.height = (this.scrollHeight) + "px";
+            if(this.scrollHeight > 150) {
+                this.style.overflowY = "scroll";
+                this.style.height = "150px";
+            }
+        }
+    </script>
+
+</body></html>
