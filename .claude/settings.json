@@ -1,0 +1,25 @@
+{
+  "permissions": {
+    "allow": [
+      "Bash(./.venv/Scripts/python.exe -c ' *)",
+      "Bash(mkdir -p \"C:\\\\Users\\\\arpit\\\\.claude\\\\plans\" 2>/dev/null; echo done)",
+      "Bash(.venv/Scripts/python -c ' *)",
+      "PowerShell(Get-CimInstance Win32_Process -Filter \"Name='python.exe'\")",
+      "Bash(tasklist //FI \"IMAGENAME eq python.exe\")",
+      "Bash(netstat -ano)",
+      "Bash(nohup .venv/Scripts/python -m uvicorn app.main:app --host 127.0.0.1 --port 8000)",
+      "Bash(disown)",
+      "Bash(nohup .venv/Scripts/python -m celery -A app.core.celery_app.celery_app worker --loglevel=info --pool=solo)",
+      "Bash(curl -s http://127.0.0.1:8000/health)",
+      "Bash(curl -s http://127.0.0.1:8000/api/v1/documents/9 -H 'Authorization: Bearer __CMDSUB_OUTPUT__')",
+      "Bash(curl -s http://127.0.0.1:8000/api/v1/documents/9/chunks -H 'Authorization: Bearer __CMDSUB_OUTPUT__')",
+      "Bash(.venv/Scripts/alembic revision *)",
+      "Bash(.venv/Scripts/python -m alembic revision --autogenerate -m \"add conversations and messages tables\")",
+      "Bash(.venv/Scripts/python -m alembic upgrade head)",
+      "Bash(curl -s http://127.0.0.1:8000/health --max-time 3)"
+    ],
+    "additionalDirectories": [
+      "C:\\Users\\arpit\\.claude\\plans"
+    ]
+  }
+}
