@@ -157,6 +157,7 @@ export default function ChatPage() {
   const [input, setInput] = useState("");
   const [initialLoading, setInitialLoading] = useState(params.id !== "new");
   const [sending, setSending] = useState(false);
+  const [searching, setSearching] = useState(false);
   const [showContext, setShowContext] = useState(true);
   const [showContextHelp, setShowContextHelp] = useState(false);
   const bottomRef = useRef<HTMLDivElement>(null);
@@ -198,23 +199,56 @@ export default function ChatPage() {
       sources: null,
       created_at: new Date().toISOString(),
     };
-    setMessages((prev) => [...prev, optimisticUserMsg]);
+    // Placeholder the tokens stream into. Negative id so it can't collide with a real one.
+    const streamingId = -Date.now();
+    setMessages((prev) => [
+      ...prev,
+      optimisticUserMsg,
+      { id: streamingId, role: "assistant", content: "", sources: null, created_at: new Date().toISOString() },
+    ]);
     setInput("");
     setSending(true);
+    setSearching(false);
 
+    const patchStreaming = (fn: (m: ChatMessage) => ChatMessage) =>
+      setMessages((prev) => prev.map((m) => (m.id === streamingId ? fn(m) : m)));
+
+    let streamFailed = false;
     try {
-      const res = await chatService.sendMessage(text, conversationId);
-      setMessages((prev) => [...prev, res.message]);
-
-      if (isNew) {
-        setConversationId(res.conversation_id);
-        setTitle(text.slice(0, 60) + (text.length > 60 ? "…" : ""));
-        router.replace(`/chat/${res.conversation_id}`);
-      }
+      await chatService.streamMessage(text, conversationId, {
+        onMeta: (newId) => {
+          if (isNew) {
+            setConversationId(newId);
+            setTitle(text.slice(0, 60) + (text.length > 60 ? "…" : ""));
+            router.replace(`/chat/${newId}`);
+          }
+        },
+        onSearching: () => setSearching(true),
+        onSources: (sources) => {
+          setSearching(false);
+          patchStreaming((m) => ({ ...m, sources: sources.length ? sources : null }));
+        },
+        onToken: (chunk) => {
+          setSearching(false);
+          patchStreaming((m) => ({ ...m, content: m.content + chunk }));
+        },
+        onDone: (messageId, sources) =>
+          patchStreaming((m) => ({ ...m, id: messageId, sources: sources ?? m.sources })),
+        onError: (detail) => {
+          streamFailed = true;
+          toast.error(detail);
+        },
+      });
     } catch (err) {
+      streamFailed = true;
       toast.error(extractErrorMessage(err, "Failed to send message. Try again."));
     } finally {
       setSending(false);
+      setSearching(false);
+      // Drop the placeholder only if nothing ever arrived, so a partial answer is kept.
+      if (streamFailed) {
+        setMessages((prev) => prev.filter((m) => !(m.id === streamingId && !m.content)));
+      }
     }
   };
 
@@ -354,7 +388,7 @@ export default function ChatPage() {
                   </div>
                 );
               })}
-              {sending && (
+              {sending && !messages.some((m) => m.id < 0 && m.content) && (
                 <div className="flex gap-3 justify-start">
                   <div
                     className="w-8 h-8 rounded-full flex items-center justify-center shrink-0 mt-1"
@@ -364,14 +398,28 @@ export default function ChatPage() {
                       auto_awesome
                     </span>
                   </div>
-                  <div className="px-4 py-3 flex items-center gap-1">
-                    {[0, 1, 2].map((d) => (
-                      <span
-                        key={d}
-                        className="w-1.5 h-1.5 rounded-full animate-pulse"
-                        style={{ background: "#8e9192", animationDelay: `${d * 150}ms` }}
-                      />
-                    ))}
+                  <div className="px-4 py-3 flex items-center gap-2">
+                    {searching ? (
+                      <>
+                        <span
+                          className="material-symbols-outlined animate-pulse"
+                          style={{ fontSize: 16, color: "#c0c1ff" }}
+                        >
+                          search
+                        </span>
+                        <span className="text-sm" style={{ color: "#c4c7c8" }}>
+                          Searching your documents…
+                        </span>
+                      </>
+                    ) : (
+                      [0, 1, 2].map((d) => (
+                        <span
+                          key={d}
+                          className="w-1.5 h-1.5 rounded-full animate-pulse"
+                          style={{ background: "#8e9192", animationDelay: `${d * 150}ms` }}
+                        />
+                      ))
+                    )}
                   </div>
                 </div>
               )}

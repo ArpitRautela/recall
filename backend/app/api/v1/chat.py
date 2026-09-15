@@ -1,4 +1,5 @@
 from fastapi import APIRouter, Depends
+from fastapi.responses import StreamingResponse
 from sqlalchemy.orm import Session
 
 from app.api.deps import get_current_user, get_db
@@ -17,6 +18,23 @@ async def send_message(
     db: Session = Depends(get_db),
 ):
     return await ChatService.send_message(db, user, body.conversation_id, body.message)
+
+
+@router.post("/stream")
+async def stream_message(
+    body: ChatRequest,
+    user: User = Depends(get_current_user),
+    db: Session = Depends(get_db),
+):
+    return StreamingResponse(
+        ChatService.stream_message(db, user, body.conversation_id, body.message),
+        media_type="text/event-stream",
+        headers={
+            "Cache-Control": "no-cache",
+            # Tells nginx not to buffer, which would defeat streaming entirely.
+            "X-Accel-Buffering": "no",
+        },
+    )
 
 
 @router.get("/conversations")

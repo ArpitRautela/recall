@@ -1,3 +1,6 @@
+import asyncio
+import json
+import logging
 from datetime import datetime, timezone
 
 from fastapi import HTTPException, status
@@ -26,6 +29,14 @@ SYSTEM_PROMPT = (
     "documents; otherwise answer directly from your own knowledge. When you use retrieved "
     "content, cite the source document and page number naturally in your answer."
 )
+
+logger = logging.getLogger(__name__)
+
+
+def _sse(event: str, data: dict) -> str:
+    """One Server-Sent Event. Payload is JSON so newlines in tokens can't break framing."""
+    return f"event: {event}\ndata: {json.dumps(data)}\n\n"
+
 
 RERANK_CANDIDATE_POOL_SIZE = 20
 RERANK_TOP_K = 5
@@ -102,9 +113,11 @@ def _make_search_tool(db: Session, user_id: int, captured_sources: list):
 
 class ChatService:
 
-    async def send_message(
-        db: Session, user: User, conversation_id: int | None, message: str
-    ) -> dict:
+    def _prepare_turn(db: Session, user: User, conversation_id: int | None, message: str):
+        """Resolve the conversation, persist the user's message, and build the agent.
+
+        Shared by the blocking and streaming paths so they can't drift apart.
+        """
         if conversation_id is not None:
             conv = (
                 db.query(Conversation)
@@ -142,17 +155,13 @@ class ChatService:
         search_tool = _make_search_tool(db, user.id, captured_sources)
         model = ChatOpenAI(model="gpt-4o-mini", api_key=settings.OPENAI_API_KEY)
         agent = create_react_agent(model, tools=[search_tool], prompt=SYSTEM_PROMPT)
+        return conv, is_first_turn, lc_messages, captured_sources, agent
 
-        try:
-            result = await agent.ainvoke({"messages": lc_messages})
-        except Exception as exc:
-            raise HTTPException(
-                status_code=status.HTTP_502_BAD_GATEWAY,
-                detail="AI service temporarily unavailable",
-            ) from exc
-
-        final_text = result["messages"][-1].content
-
+    def _finalise_turn(
+        db: Session, user: User, conv, is_first_turn: bool, message: str,
+        final_text: str, captured_sources: list,
+    ):
+        """Persist the assistant reply and title the conversation. Shared by both paths."""
         assistant_msg = Message(
             conversation_id=conv.id,
             role=MessageRole.ASSISTANT,
@@ -181,6 +190,28 @@ class ChatService:
                 ),
                 conversation_id=conv.id,
             )
+        return assistant_msg
+
+    async def send_message(
+        db: Session, user: User, conversation_id: int | None, message: str
+    ) -> dict:
+        conv, is_first_turn, lc_messages, captured_sources, agent = ChatService._prepare_turn(
+            db, user, conversation_id, message
+        )
+
+        try:
+            result = await agent.ainvoke({"messages": lc_messages})
+        except Exception as exc:
+            raise HTTPException(
+                status_code=status.HTTP_502_BAD_GATEWAY,
+                detail="AI service temporarily unavailable",
+            ) from exc
+
+        final_text = result["messages"][-1].content
+
+        assistant_msg = ChatService._finalise_turn(
+            db, user, conv, is_first_turn, message, final_text, captured_sources
+        )
 
         return {
             "conversation_id": conv.id,
@@ -192,6 +223,71 @@ class ChatService:
                 "created_at": assistant_msg.created_at,
             },
         }
+
+    async def stream_message(
+        db: Session, user: User, conversation_id: int | None, message: str
+    ):
+        """Yield Server-Sent Events for one chat turn.
+
+        Event order is meaningful: `meta` first so a new conversation's id is known
+        before any text arrives, then `searching`/`sources` during retrieval (which
+        precedes generation in a ReAct agent), then `token`s, then `done`.
+        """
+        conv, is_first_turn, lc_messages, captured_sources, agent = ChatService._prepare_turn(
+            db, user, conversation_id, message
+        )
+
+        yield _sse("meta", {"conversation_id": conv.id})
+
+        chunks: list[str] = []
+        sources_sent = False
+        failed = False
+
+        try:
+            async for event in agent.astream_events({"messages": lc_messages}, version="v2"):
+                kind = event["event"]
+
+                if kind == "on_tool_start":
+                    yield _sse("searching", {"tool": event.get("name", "search_knowledge_base")})
+
+                elif kind == "on_tool_end" and not sources_sent:
+                    # Sources are captured during the tool call, so they can be shown
+                    # while the answer is still being written.
+                    sources_sent = True
+                    yield _sse("sources", {"sources": captured_sources or []})
+
+                elif kind == "on_chat_model_stream":
+                    text = getattr(event["data"].get("chunk"), "content", "")
+                    if text:
+                        chunks.append(text)
+                        yield _sse("token", {"text": text})
+
+        except asyncio.CancelledError:
+            # Client went away. Persist below in `finally` rather than losing the turn.
+            raise
+        except Exception:
+            failed = True
+            logger.exception("Chat streaming failed for conversation %s", conv.id)
+            # Headers are already sent, so the status can't change — report in-band.
+            yield _sse("error", {"detail": "AI service temporarily unavailable"})
+        finally:
+            final_text = "".join(chunks)
+            if final_text:
+                try:
+                    assistant_msg = ChatService._finalise_turn(
+                        db, user, conv, is_first_turn, message, final_text, captured_sources
+                    )
+                    if not failed:
+                        yield _sse(
+                            "done",
+                            {
+                                "message_id": assistant_msg.id,
+                                "conversation_id": conv.id,
+                                "sources": captured_sources or None,
+                            },
+                        )
+                except Exception:
+                    logger.exception("Failed to persist streamed reply for conv %s", conv.id)
 
     def list_conversations(db: Session, user_id: int) -> list[dict]:
         convs = (
