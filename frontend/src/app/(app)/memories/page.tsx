@@ -61,6 +61,7 @@ export default function MemoriesPage() {
   const [frequent, setFrequent] = useState<FrequentItem[]>([]);
   const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
   const [loading, setLoading] = useState(true);
+  const [panelOpen, setPanelOpen] = useState(false);
 
   useEffect(() => {
     Promise.all([
@@ -115,9 +116,9 @@ export default function MemoriesPage() {
         }}
       />
 
-      <div className="flex h-full">
+      <div className="flex flex-col lg:flex-row h-full">
         {/* Main */}
-        <div className="flex-1 min-w-0 overflow-y-auto px-8 pt-8 pb-8">
+        <div className="flex-1 min-w-0 overflow-y-auto px-4 sm:px-8 pt-6 sm:pt-8 pb-8">
           <div className="mb-6">
             <h1
               className="font-semibold text-[#ffffff]"
@@ -128,6 +129,16 @@ export default function MemoriesPage() {
             <p style={{ fontSize: 14, color: "#c4c7c8", marginTop: 4 }}>
               Everything RECALL has captured from your documents and conversations
             </p>
+            <button
+              onClick={() => setPanelOpen((v) => !v)}
+              className="lg:hidden mt-3 flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium"
+              style={{ background: "rgba(68,71,72,0.25)", color: "#c4c7c8" }}
+            >
+              <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+                {panelOpen ? "close" : "folder"}
+              </span>
+              {panelOpen ? "Hide" : "Workspaces & activity"}
+            </button>
           </div>
 
           {/* Summary */}
@@ -326,7 +337,7 @@ export default function MemoriesPage() {
 
         {/* Right sidebar */}
         <aside
-          className="w-64 shrink-0 overflow-y-auto p-6 flex flex-col gap-6"
+          className={`${panelOpen ? "flex" : "hidden"} lg:flex w-full lg:w-64 shrink-0 overflow-y-auto p-4 sm:p-6 flex-col gap-6 order-first lg:order-last`}
           style={{ borderLeft: "1px solid rgba(68,71,72,0.1)" }}
         >
           {/* Workspaces */}

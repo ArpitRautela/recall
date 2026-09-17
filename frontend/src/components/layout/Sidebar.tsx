@@ -14,7 +14,11 @@ const NAV_ITEMS = [
   { icon: "settings",    label: "Settings",       href: "/settings" },
 ];
 
-export default function Sidebar() {
+/**
+ * The sidebar body. Rendered twice: as a permanent column on large screens, and
+ * inside a Sheet drawer below `lg`. Kept as one component so the two can't drift.
+ */
+export function SidebarContent({ onNavigate }: { onNavigate?: () => void }) {
   const pathname = usePathname();
   const router = useRouter();
   const { user, clearAuth } = useAuthStore();
@@ -33,10 +37,7 @@ export default function Sidebar() {
     .toUpperCase() ?? "U";
 
   return (
-    <aside
-      className="flex flex-col h-full shrink-0"
-      style={{ width: 280, background: "#1c1b1b", borderRight: "1px solid rgba(68,71,72,0.2)" }}
-    >
+    <div className="flex flex-col h-full">
       {/* Logo */}
       <div className="flex items-center gap-3 px-5 py-5 mb-2 shrink-0">
         <div
@@ -80,6 +81,7 @@ export default function Sidebar() {
             <Link
               key={item.href}
               href={item.href}
+              onClick={onNavigate}
               className="flex items-center gap-3 w-full px-3 py-2 rounded-lg text-sm transition-colors"
               style={{
                 background: isActive ? "rgba(255,255,255,0.06)" : "transparent",
@@ -148,6 +150,17 @@ export default function Sidebar() {
           </button>
         </div>
       </div>
+    </div>
+  );
+}
+
+export default function Sidebar() {
+  return (
+    <aside
+      className="hidden lg:flex flex-col h-full shrink-0"
+      style={{ width: 280, background: "#1c1b1b", borderRight: "1px solid rgba(68,71,72,0.2)" }}
+    >
+      <SidebarContent />
     </aside>
   );
 }

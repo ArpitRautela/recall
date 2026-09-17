@@ -10,6 +10,14 @@ import {
   type StorageUsage,
 } from "@/services/documents";
 import { healthService, type ReadinessReport } from "@/services/health";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogFooter,
+  DialogHeader,
+  DialogTitle,
+} from "@/components/ui/dialog";
 import { workspaceService, type Workspace } from "@/services/workspace";
 import { formatBytes, formatDate, fileIcon } from "@/lib/format";
 import { extractErrorMessage } from "@/lib/errors";
@@ -67,6 +75,10 @@ export default function VaultPage() {
   const [detailDoc, setDetailDoc] = useState<RecallDocument | null>(null);
   const [chunks, setChunks] = useState<DocumentChunk[] | null>(null);
   const [chunksError, setChunksError] = useState(false);
+  const [confirmDeleteDoc, setConfirmDeleteDoc] = useState<RecallDocument | null>(null);
+  const [confirmDeleteWs, setConfirmDeleteWs] = useState<Workspace | null>(null);
+  const [newCollectionOpen, setNewCollectionOpen] = useState(false);
+  const [newCollectionName, setNewCollectionName] = useState("");
   const fileInputRef = useRef<HTMLInputElement>(null);
 
   const openDetail = (doc: RecallDocument) => {
@@ -186,7 +198,7 @@ export default function VaultPage() {
   };
 
   const handleDelete = async (doc: RecallDocument) => {
-    if (!window.confirm(`Delete "${doc.original_filename}"? This can't be undone.`)) return;
+    setConfirmDeleteDoc(null);
     try {
       await documentService.remove(doc.id);
       setDocuments((prev) => prev.filter((d) => d.id !== doc.id));
@@ -208,9 +220,11 @@ export default function VaultPage() {
     }
   };
 
-  const handleCreateWorkspace = async () => {
-    const name = window.prompt("Collection name");
-    if (!name || !name.trim()) return;
+  const handleCreateWorkspace = async (rawName: string) => {
+    const name = rawName.trim();
+    if (!name) return;
+    setNewCollectionOpen(false);
+    setNewCollectionName("");
     try {
       const ws = await workspaceService.create(name.trim());
       setWorkspaces((prev) => [...prev, ws]);
@@ -221,9 +235,8 @@ export default function VaultPage() {
     }
   };
 
-  const handleDeleteWorkspace = async (ws: Workspace, e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (!window.confirm(`Delete collection "${ws.name}"?`)) return;
+  const handleDeleteWorkspace = async (ws: Workspace) => {
+    setConfirmDeleteWs(null);
     try {
       await workspaceService.remove(ws.id);
       setWorkspaces((prev) => prev.filter((w) => w.id !== ws.id));
@@ -321,8 +334,8 @@ export default function VaultPage() {
       />
 
       {/* Header */}
-      <div className="px-8 pt-8 pb-6">
-        <div className="flex items-start justify-between">
+      <div className="px-4 sm:px-8 pt-6 sm:pt-8 pb-6">
+        <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-4">
           <div>
             <h1 className="font-semibold text-[#ffffff]" style={{ fontSize: 24, letterSpacing: "-0.02em" }}>
               Vault
@@ -348,7 +361,7 @@ export default function VaultPage() {
       </div>
 
       {/* Stats */}
-      <div className="px-8 mb-6 grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="px-4 sm:px-8 mb-6 grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {STATS.map((s) => (
           <div key={s.label} className="p-4 rounded-xl" style={CARD_STYLE}>
             <div className="flex items-start justify-between mb-2">
@@ -368,9 +381,9 @@ export default function VaultPage() {
       </div>
 
       {/* Body: collections + file grid */}
-      <div className="px-8 flex gap-6">
+      <div className="px-4 sm:px-8 flex flex-col lg:flex-row gap-4 lg:gap-6">
         {/* Collections sidebar */}
-        <aside className="w-48 shrink-0">
+        <aside className="w-full lg:w-48 shrink-0">
           <p className="text-xs font-semibold uppercase mb-3" style={{ color: "#8e9192", letterSpacing: "0.1em" }}>
             Collections
           </p>
@@ -413,7 +426,7 @@ export default function VaultPage() {
                     <span className="text-xs" style={{ color: "#8e9192" }}>{w.document_count}</span>
                     {!w.is_default && (
                       <button
-                        onClick={(e) => handleDeleteWorkspace(w, e)}
+                        onClick={(e) => { e.stopPropagation(); setConfirmDeleteWs(w); }}
                         className="opacity-0 group-hover:opacity-100 transition-opacity"
                       >
                         <span className="material-symbols-outlined" style={{ fontSize: 14, color: "#8e9192" }}>
@@ -427,7 +440,7 @@ export default function VaultPage() {
             })}
           </div>
           <button
-            onClick={handleCreateWorkspace}
+            onClick={() => setNewCollectionOpen(true)}
             className="flex items-center gap-1 px-3 py-2 text-sm mt-2 transition-colors hover:text-[#e5e2e1]"
             style={{ color: "#c4c7c8" }}
           >
@@ -440,7 +453,7 @@ export default function VaultPage() {
         <div className="flex-1 min-w-0">
           {/* Filter bar */}
           <div
-            className="flex items-center gap-2 mb-4 px-4 py-2 rounded-xl"
+            className="flex flex-wrap items-center gap-2 mb-4 px-3 sm:px-4 py-2 rounded-xl"
             style={CARD_STYLE}
           >
             <span className="material-symbols-outlined" style={{ fontSize: 18, color: "#8e9192" }}>filter_list</span>
@@ -473,7 +486,7 @@ export default function VaultPage() {
                 Clear
               </button>
             )}
-            <div className="ml-auto flex items-center gap-3">
+            <div className="ml-auto flex items-center gap-2 sm:gap-3">
               <div className="flex items-center gap-1 text-xs" style={{ color: "#c4c7c8" }}>
                 <span>Sort by:</span>
                 <select
@@ -549,7 +562,7 @@ export default function VaultPage() {
               </button>
             </div>
           ) : viewMode === "grid" ? (
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-2 xl:grid-cols-3 gap-4">
               {visibleDocuments.map((d) => {
                 const { icon, iconBg, iconColor } = fileIcon(d.mime_type);
                 const status = STATUS_DISPLAY[d.status];
@@ -577,7 +590,7 @@ export default function VaultPage() {
                             </span>
                           </button>
                         )}
-                        <button onClick={(e) => { e.stopPropagation(); handleDelete(d); }} title="Delete document">
+                        <button onClick={(e) => { e.stopPropagation(); setConfirmDeleteDoc(d); }} title="Delete document">
                           <span className="material-symbols-outlined" style={{ fontSize: 18, color: "#8e9192" }}>
                             delete
                           </span>
@@ -641,7 +654,7 @@ export default function VaultPage() {
                           </span>
                         </button>
                       )}
-                      <button onClick={(e) => { e.stopPropagation(); handleDelete(d); }} title="Delete document">
+                      <button onClick={(e) => { e.stopPropagation(); setConfirmDeleteDoc(d); }} title="Delete document">
                         <span className="material-symbols-outlined" style={{ fontSize: 18, color: "#8e9192" }}>delete</span>
                       </button>
                     </div>
@@ -655,7 +668,7 @@ export default function VaultPage() {
 
       {/* Footer */}
       <div
-        className="px-8 py-3 mt-6 flex items-center justify-between text-xs sticky bottom-0"
+        className="px-4 sm:px-8 py-3 mt-6 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 text-xs sticky bottom-0"
         style={{ background: "#131313", borderTop: "1px solid rgba(68,71,72,0.1)", color: "#8e9192" }}
       >
         <span className="flex items-center gap-2" title={healthLabel.detail}>
@@ -671,21 +684,118 @@ export default function VaultPage() {
         </span>
       </div>
 
+
+      {/* Delete document */}
+      <Dialog open={!!confirmDeleteDoc} onOpenChange={(o) => !o && setConfirmDeleteDoc(null)}>
+        <DialogContent style={{ background: "#1c1b1b", border: "1px solid rgba(68,71,72,0.4)" }}>
+          <DialogHeader>
+            <DialogTitle style={{ color: "#e5e2e1" }}>Delete document</DialogTitle>
+            <DialogDescription style={{ color: "#c4c7c8" }}>
+              &ldquo;{confirmDeleteDoc?.original_filename}&rdquo; and everything indexed from it
+              will be removed. This can&rsquo;t be undone.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <button
+              onClick={() => setConfirmDeleteDoc(null)}
+              className="px-4 py-2 rounded text-sm transition-colors hover:bg-[#2a2a2a]"
+              style={{ border: "1px solid rgba(68,71,72,0.4)", color: "#c4c7c8" }}
+            >
+              Cancel
+            </button>
+            <button
+              onClick={() => confirmDeleteDoc && handleDelete(confirmDeleteDoc)}
+              className="px-4 py-2 rounded text-sm font-medium transition-opacity hover:opacity-90"
+              style={{ background: "#f87171", color: "#131313" }}
+            >
+              Delete
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete collection */}
+      <Dialog open={!!confirmDeleteWs} onOpenChange={(o) => !o && setConfirmDeleteWs(null)}>
+        <DialogContent style={{ background: "#1c1b1b", border: "1px solid rgba(68,71,72,0.4)" }}>
+          <DialogHeader>
+            <DialogTitle style={{ color: "#e5e2e1" }}>Delete collection</DialogTitle>
+            <DialogDescription style={{ color: "#c4c7c8" }}>
+              &ldquo;{confirmDeleteWs?.name}&rdquo; will be removed. Documents inside it are not
+              deleted, but a collection must be empty first.
+            </DialogDescription>
+          </DialogHeader>
+          <DialogFooter>
+            <button
+              onClick={() => setConfirmDeleteWs(null)}
+              className="px-4 py-2 rounded text-sm transition-colors hover:bg-[#2a2a2a]"
+              style={{ border: "1px solid rgba(68,71,72,0.4)", color: "#c4c7c8" }}
+            >
+              Cancel
+            </button>
+            <button
+              onClick={() => confirmDeleteWs && handleDeleteWorkspace(confirmDeleteWs)}
+              className="px-4 py-2 rounded text-sm font-medium transition-opacity hover:opacity-90"
+              style={{ background: "#f87171", color: "#131313" }}
+            >
+              Delete
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* New collection */}
+      <Dialog open={newCollectionOpen} onOpenChange={setNewCollectionOpen}>
+        <DialogContent style={{ background: "#1c1b1b", border: "1px solid rgba(68,71,72,0.4)" }}>
+          <DialogHeader>
+            <DialogTitle style={{ color: "#e5e2e1" }}>New collection</DialogTitle>
+            <DialogDescription style={{ color: "#c4c7c8" }}>
+              Collections group documents. Uploads go to the collection you have selected.
+            </DialogDescription>
+          </DialogHeader>
+          <input
+            autoFocus
+            value={newCollectionName}
+            onChange={(e) => setNewCollectionName(e.target.value)}
+            onKeyDown={(e) => e.key === "Enter" && handleCreateWorkspace(newCollectionName)}
+            placeholder="e.g. Research papers"
+            className="w-full px-3 py-2 rounded text-sm outline-none"
+            style={{ background: "#131313", border: "1px solid rgba(68,71,72,0.3)", color: "#e5e2e1" }}
+          />
+          <DialogFooter>
+            <button
+              onClick={() => setNewCollectionOpen(false)}
+              className="px-4 py-2 rounded text-sm transition-colors hover:bg-[#2a2a2a]"
+              style={{ border: "1px solid rgba(68,71,72,0.4)", color: "#c4c7c8" }}
+            >
+              Cancel
+            </button>
+            <button
+              onClick={() => handleCreateWorkspace(newCollectionName)}
+              disabled={!newCollectionName.trim()}
+              className="px-4 py-2 rounded text-sm font-medium transition-opacity hover:opacity-90 disabled:opacity-40"
+              style={{ background: "#ffffff", color: "#131313" }}
+            >
+              Create
+            </button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
       {/* Document detail */}
       {detailDoc && (
         <div
-          className="fixed inset-0 z-50 flex items-center justify-center p-6"
+          className="fixed inset-0 z-50 flex items-center justify-center p-3 sm:p-6"
           style={{ background: "rgba(0,0,0,0.6)" }}
           onClick={() => setDetailDoc(null)}
         >
           <div
-            className="w-full max-w-3xl max-h-[85vh] rounded-xl flex flex-col overflow-hidden"
+            className="w-full max-w-3xl max-h-[90vh] sm:max-h-[85vh] rounded-xl flex flex-col overflow-hidden"
             style={{ background: "#1c1b1b", border: "1px solid rgba(68,71,72,0.3)" }}
             onClick={(e) => e.stopPropagation()}
           >
             {/* Header */}
             <div
-              className="px-6 py-4 flex items-start justify-between shrink-0"
+              className="px-4 sm:px-6 py-4 flex items-start justify-between shrink-0"
               style={{ borderBottom: "1px solid rgba(68,71,72,0.2)" }}
             >
               <div className="min-w-0">
@@ -711,7 +821,7 @@ export default function VaultPage() {
             </div>
 
             {/* Body */}
-            <div className="flex-1 overflow-y-auto px-6 py-5">
+            <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-5">
               {detailDoc.status === "FAILED" ? (
                 <div
                   className="p-4 rounded-xl"

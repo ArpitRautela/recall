@@ -121,7 +121,7 @@ export default function DashboardPage() {
   };
 
   return (
-    <div className="relative p-8 overflow-y-auto h-full" style={{ background: "#131313" }}>
+    <div className="relative p-4 sm:p-8 overflow-y-auto h-full" style={{ background: "#131313" }}>
 
       {/* Atmospheric glow */}
       <div
@@ -139,7 +139,7 @@ export default function DashboardPage() {
           <div>
             <h2
               className="font-semibold text-[#ffffff] mb-1"
-              style={{ fontSize: 32, lineHeight: "40px", letterSpacing: "-0.03em" }}
+              style={{ fontSize: "clamp(24px, 6vw, 32px)", lineHeight: 1.25, letterSpacing: "-0.03em" }}
             >
               {getGreeting()}, {firstName}
             </h2>
@@ -176,7 +176,7 @@ export default function DashboardPage() {
       </section>
 
       {/* Quick Actions */}
-      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-6 mb-12">
+      <section className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6 mb-8 sm:mb-12">
         {QUICK_ACTIONS.map((a) => (
           <Link
             key={a.label}
@@ -209,7 +209,7 @@ export default function DashboardPage() {
       </section>
 
       {/* Bottom grid */}
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-12">
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8 lg:gap-12">
         {/* Recent Activity */}
         <div className="lg:col-span-2">
           <div className="flex items-center justify-between mb-6">

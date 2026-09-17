@@ -94,7 +94,7 @@ export default function LoginPage() {
 
       {/* ── Right: Auth (40%) ── */}
       <section
-        className="flex flex-1 flex-col items-center justify-center px-6 py-12"
+        className="flex flex-1 flex-col items-center justify-center px-4 sm:px-6 py-8 sm:py-12"
         style={{ background: "#0e0e0e" }}
       >
         <div className="flex md:hidden mb-12">
@@ -102,7 +102,7 @@ export default function LoginPage() {
         </div>
 
         <div
-          className="w-full max-w-[440px] space-y-8 rounded-xl p-10 shadow-2xl"
+          className="w-full max-w-[440px] space-y-8 rounded-xl p-6 sm:p-10 shadow-2xl"
           style={{
             background: "rgba(255,255,255,0.04)",
             border: "1px solid rgba(255,255,255,0.08)",

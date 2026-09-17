@@ -108,7 +108,7 @@ export default function SettingsPage() {
       />
 
       {/* Page header */}
-      <div className="px-8 pt-8 pb-4">
+      <div className="px-4 sm:px-8 pt-6 sm:pt-8 pb-4">
         <div className="flex items-center gap-2 text-sm" style={{ color: "#c4c7c8" }}>
           <span style={{ color: "#e5e2e1", fontWeight: 500 }}>Settings</span>
           <span className="material-symbols-outlined" style={{ fontSize: 16 }}>chevron_right</span>
@@ -116,13 +116,13 @@ export default function SettingsPage() {
         </div>
       </div>
 
-      <div className="flex px-8 pb-8 gap-6">
+      <div className="flex flex-col lg:flex-row px-4 sm:px-8 pb-8 gap-4 lg:gap-6">
         {/* Left tabs */}
-        <aside className="w-52 shrink-0">
-          <div className="space-y-0.5">
+        <aside className="w-full lg:w-52 shrink-0">
+          <div className="flex lg:block gap-1 lg:gap-0 lg:space-y-0.5 overflow-x-auto lg:overflow-visible pb-2 lg:pb-0">
             {TABS.map((t) => {
               if (t.key === "divider") {
-                return <div key="div" className="h-px my-2" style={{ background: "rgba(68,71,72,0.2)" }} />;
+                return <div key="div" className="hidden lg:block h-px my-2" style={{ background: "rgba(68,71,72,0.2)" }} />;
               }
               const isDanger = t.key === "danger";
               const isActive = activeTab === t.key;
@@ -130,7 +130,7 @@ export default function SettingsPage() {
                 <button
                   key={t.key}
                   onClick={() => setActiveTab(t.key)}
-                  className="flex items-center gap-2 w-full px-3 py-2 rounded-lg text-sm transition-colors"
+                  className="flex items-center gap-2 w-auto lg:w-full shrink-0 lg:shrink whitespace-nowrap px-3 py-2 rounded-lg text-sm transition-colors"
                   style={{
                     background: isActive ? "rgba(255,255,255,0.06)" : "transparent",
                     color: isDanger ? "#f87171" : isActive ? "#e5e2e1" : "#c4c7c8",
@@ -158,7 +158,7 @@ export default function SettingsPage() {
               Manage your personal information and how it appears to others.
             </p>
 
-            <div className="flex gap-6">
+            <div className="flex flex-col sm:flex-row gap-6">
               {/* Avatar */}
               <div className="shrink-0">
                 <div
@@ -174,7 +174,7 @@ export default function SettingsPage() {
 
               {/* Form */}
               <div className="flex-1 space-y-4">
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs font-medium mb-1" style={{ color: "#c4c7c8" }}>
                       Full Name
@@ -199,7 +199,7 @@ export default function SettingsPage() {
                     />
                   </div>
                 </div>
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                   <div>
                     <label className="block text-xs font-medium mb-1" style={{ color: "#c4c7c8" }}>
                       Current Password

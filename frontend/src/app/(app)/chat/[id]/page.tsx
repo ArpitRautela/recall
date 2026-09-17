@@ -158,9 +158,12 @@ export default function ChatPage() {
   const [initialLoading, setInitialLoading] = useState(params.id !== "new");
   const [sending, setSending] = useState(false);
   const [searching, setSearching] = useState(false);
-  const [showContext, setShowContext] = useState(true);
+  // Below lg the panel overlays the conversation, so it must not start open.
+  const [showContext, setShowContext] = useState(false);
   const [showContextHelp, setShowContextHelp] = useState(false);
+  const [copiedId, setCopiedId] = useState<number | null>(null);
   const bottomRef = useRef<HTMLDivElement>(null);
+  const abortRef = useRef<AbortController | null>(null);
 
   const isNew = conversationId === null;
 
@@ -188,6 +191,11 @@ export default function ChatPage() {
     bottomRef.current?.scrollIntoView({ behavior: "smooth" });
   }, [messages, sending]);
 
+  // Open by default only where it sits beside the conversation rather than over it.
+  useEffect(() => {
+    if (window.innerWidth >= 1024) setShowContext(true);
+  }, []);
+
   const sendMessage = async () => {
     const text = input.trim();
     if (!text || sending) return;
@@ -212,6 +220,9 @@ export default function ChatPage() {
 
     const patchStreaming = (fn: (m: ChatMessage) => ChatMessage) =>
       setMessages((prev) => prev.map((m) => (m.id === streamingId ? fn(m) : m)));
+
+    const controller = new AbortController();
+    abortRef.current = controller;
 
     let streamFailed = false;
     try {
@@ -238,11 +249,16 @@ export default function ChatPage() {
           streamFailed = true;
           toast.error(detail);
         },
-      });
+      }, controller.signal);
     } catch (err) {
-      streamFailed = true;
-      toast.error(extractErrorMessage(err, "Failed to send message. Try again."));
+      // Stopping is a deliberate action, not an error. The backend persists whatever
+      // was generated before the disconnect, so the partial reply is kept.
+      if ((err as Error)?.name !== "AbortError") {
+        streamFailed = true;
+        toast.error(extractErrorMessage(err, "Failed to send message. Try again."));
+      }
     } finally {
+      abortRef.current = null;
       setSending(false);
       setSearching(false);
       // Drop the placeholder only if nothing ever arrived, so a partial answer is kept.
@@ -269,13 +285,13 @@ export default function ChatPage() {
       <div className="flex flex-col flex-1 min-w-0">
         {/* Chat header */}
         <div
-          className="px-6 py-3 flex items-center justify-between shrink-0"
+          className="px-4 sm:px-6 py-3 flex items-center justify-between shrink-0"
           style={{ borderBottom: "1px solid rgba(68,71,72,0.1)", background: "#131313" }}
         >
           <div className="flex items-center gap-3 min-w-0">
             <h2
               className="font-semibold text-[#e5e2e1] truncate"
-              style={{ fontSize: 15, maxWidth: 400 }}
+              style={{ fontSize: 15, maxWidth: "min(400px, 45vw)" }}
             >
               {isNew ? "New Chat" : title || "Conversation"}
             </h2>
@@ -309,7 +325,7 @@ export default function ChatPage() {
         </div>
 
         {/* Messages */}
-        <div className="flex-1 overflow-y-auto px-6 py-6">
+        <div className="flex-1 overflow-y-auto px-4 sm:px-6 py-6">
           {initialLoading ? (
             <div className="flex items-center justify-center h-full">
               <div
@@ -318,7 +334,7 @@ export default function ChatPage() {
               />
             </div>
           ) : showEmptyState ? (
-            <div className="flex flex-col items-center justify-center h-full text-center">
+            <div className="flex flex-col items-center justify-center h-full text-center max-w-5xl mx-auto">
               <div
                 className="w-16 h-16 rounded-2xl flex items-center justify-center mb-4"
                 style={{ background: "rgba(192,193,255,0.1)" }}
@@ -335,7 +351,7 @@ export default function ChatPage() {
               </p>
             </div>
           ) : (
-            <div className="space-y-6 max-w-3xl mx-auto">
+            <div className="space-y-6 max-w-5xl mx-auto">
               {messages.map((msg) => {
                 const sourceGroups = msg.sources ? groupSources(msg.sources) : [];
                 return (
@@ -354,7 +370,11 @@ export default function ChatPage() {
                       </div>
                     )}
                     <div
-                      className="max-w-xl px-4 py-3 rounded-2xl"
+                      className={
+                        msg.role === "user"
+                          ? "max-w-[85%] sm:max-w-xl px-4 py-3 rounded-2xl"
+                          : "min-w-0 flex-1 px-4 py-3 rounded-2xl"
+                      }
                       style={
                         msg.role === "user"
                           ? { background: "#353534", borderRadius: "18px 18px 4px 18px" }
@@ -362,6 +382,23 @@ export default function ChatPage() {
                       }
                     >
                       <MessageContent content={msg.content} />
+                      {msg.role === "assistant" && msg.content && msg.id > 0 && (
+                        <button
+                          onClick={() => {
+                            navigator.clipboard.writeText(msg.content);
+                            setCopiedId(msg.id);
+                            setTimeout(() => setCopiedId((c) => (c === msg.id ? null : c)), 1500);
+                          }}
+                          title="Copy"
+                          className="mt-2 flex items-center gap-1 text-xs transition-colors hover:text-[#e5e2e1]"
+                          style={{ color: copiedId === msg.id ? "#4ade80" : "#8e9192" }}
+                        >
+                          <span className="material-symbols-outlined" style={{ fontSize: 14 }}>
+                            {copiedId === msg.id ? "check" : "content_copy"}
+                          </span>
+                          {copiedId === msg.id ? "Copied" : "Copy"}
+                        </button>
+                      )}
                       {sourceGroups.length > 0 && (
                         <div className="flex flex-wrap gap-2 mt-3">
                           {sourceGroups.map((s) => (
@@ -429,14 +466,14 @@ export default function ChatPage() {
         </div>
 
         {/* Input */}
-        <div className="px-6 pb-6 pt-2 shrink-0">
+        <div className="px-4 sm:px-6 pb-4 sm:pb-6 pt-2 shrink-0">
           {!isNew && (
-            <p className="text-center text-xs mb-2" style={{ color: "#8e9192", letterSpacing: "0.05em" }}>
+            <p className="text-center text-xs mb-2 max-w-5xl mx-auto" style={{ color: "#8e9192", letterSpacing: "0.05em" }}>
               AI CAN MAKE MISTAKES. VERIFY IMPORTANT INFO.
             </p>
           )}
           <div
-            className="rounded-xl p-3"
+            className="rounded-xl p-3 max-w-5xl mx-auto"
             style={{ background: "#201f1f", border: "1px solid rgba(68,71,72,0.2)" }}
           >
             <textarea
@@ -455,6 +492,17 @@ export default function ChatPage() {
               style={{ color: "#e5e2e1", caretColor: "#c0c1ff" }}
             />
             <div className="flex items-center justify-end mt-2">
+              {sending ? (
+                <button
+                  onClick={() => abortRef.current?.abort()}
+                  title="Stop generating"
+                  className="flex items-center gap-1.5 px-3 h-8 rounded-lg text-xs font-medium transition-colors hover:bg-[#2a2a2a]"
+                  style={{ border: "1px solid rgba(68,71,72,0.4)", color: "#c4c7c8" }}
+                >
+                  <span className="material-symbols-outlined" style={{ fontSize: 16 }}>stop_circle</span>
+                  Stop
+                </button>
+              ) : (
               <button
                 onClick={sendMessage}
                 disabled={!input.trim() || sending}
@@ -472,6 +520,7 @@ export default function ChatPage() {
                   send
                 </span>
               </button>
+              )}
             </div>
           </div>
         </div>
@@ -479,12 +528,19 @@ export default function ChatPage() {
 
       {/* Context panel */}
       {showContext && !isNew && (
+        <div
+          className="fixed inset-0 z-30 bg-black/50 lg:hidden"
+          onClick={() => setShowContext(false)}
+          aria-hidden
+        />
+      )}
+      {showContext && !isNew && (
         <aside
-          className="w-72 shrink-0 flex flex-col overflow-y-auto"
+          className="fixed inset-y-0 right-0 z-40 w-[85vw] max-w-xs shadow-2xl lg:static lg:z-auto lg:w-72 lg:max-w-none lg:shadow-none shrink-0 flex flex-col overflow-y-auto"
           style={{ borderLeft: "1px solid rgba(68,71,72,0.1)", background: "#0e0e0e" }}
         >
           <div
-            className="px-5 py-4 flex items-center justify-between shrink-0"
+            className="px-4 sm:px-5 py-4 flex items-center justify-between shrink-0"
             style={{ borderBottom: "1px solid rgba(68,71,72,0.1)" }}
           >
             <p
@@ -502,7 +558,7 @@ export default function ChatPage() {
             </button>
           </div>
 
-          <div className="flex-1 overflow-y-auto px-5 py-5 space-y-6">
+          <div className="flex-1 overflow-y-auto px-4 sm:px-5 py-5 space-y-6">
             {/* Connected knowledge — real sources actually used in this conversation */}
             <div>
               <p

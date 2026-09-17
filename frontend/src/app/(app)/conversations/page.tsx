@@ -102,7 +102,7 @@ export default function ConversationsPage() {
       />
 
       {/* Header */}
-      <div className="px-8 pt-8 pb-4">
+      <div className="px-4 sm:px-8 pt-6 sm:pt-8 pb-4">
         <div className="flex items-start justify-between">
           <div>
             <h1 className="font-semibold text-[#ffffff]" style={{ fontSize: 24, letterSpacing: "-0.02em" }}>
@@ -124,7 +124,7 @@ export default function ConversationsPage() {
       </div>
 
       {/* Stats */}
-      <div className="px-8 mb-6 grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <div className="px-4 sm:px-8 mb-6 grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
         {STATS.map((s) => (
           <div key={s.label} className="p-4 rounded-xl" style={CARD_STYLE}>
             <div className="flex items-start justify-between mb-2">
@@ -142,7 +142,7 @@ export default function ConversationsPage() {
         ))}
       </div>
 
-      <div className="px-8">
+      <div className="px-4 sm:px-8">
         {/* Search + sort */}
         <div className="flex items-center gap-3 mb-6">
           <div className="relative flex-1">
@@ -258,7 +258,7 @@ export default function ConversationsPage() {
 
       {/* Footer */}
       <div
-        className="px-8 py-3 flex items-center justify-between text-xs sticky bottom-0"
+        className="px-4 sm:px-8 py-3 flex flex-col sm:flex-row sm:items-center sm:justify-between gap-1 text-xs sticky bottom-0"
         style={{ background: "#131313", borderTop: "1px solid rgba(68,71,72,0.1)", color: "#8e9192" }}
       >
         <span className="flex items-center gap-2">

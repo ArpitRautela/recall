@@ -25,6 +25,7 @@ export default function SearchPage() {
   const [searched, setSearched] = useState(false);
   const [loading, setLoading] = useState(false);
   const [recentSearches, setRecentSearches] = useState<string[]>([]);
+  const [panelOpen, setPanelOpen] = useState(false);
 
   const [workspaces, setWorkspaces] = useState<Workspace[]>([]);
   const [workspaceId, setWorkspaceId] = useState<string>("");
@@ -69,8 +70,8 @@ export default function SearchPage() {
 
       {!searched ? (
         /* Empty state */
-        <div className="flex flex-col items-center justify-center h-full pb-24">
-          <h1 className="font-semibold text-[#ffffff] mb-2" style={{ fontSize: 48, letterSpacing: "-0.04em" }}>
+        <div className="flex flex-col items-center justify-center h-full px-4 pb-24 text-center">
+          <h1 className="font-semibold text-[#ffffff] mb-2" style={{ fontSize: "clamp(32px, 9vw, 48px)", letterSpacing: "-0.04em" }}>
             AI Search
           </h1>
           <p className="mb-8" style={{ color: "#c4c7c8", fontSize: 16 }}>
@@ -104,9 +105,9 @@ export default function SearchPage() {
         </div>
       ) : (
         /* Results state */
-        <div className="flex h-full">
+        <div className="flex flex-col lg:flex-row h-full">
           {/* Main content */}
-          <div className="flex-1 min-w-0 overflow-y-auto px-8 py-8">
+          <div className="flex-1 min-w-0 overflow-y-auto px-4 sm:px-8 py-6 sm:py-8">
             {/* Search bar */}
             <div
               className="flex items-center gap-3 rounded-xl px-4 py-3 mb-4"
@@ -182,6 +183,13 @@ export default function SearchPage() {
                 </button>
               )}
               <button
+                onClick={() => setPanelOpen((v) => !v)}
+                className="lg:hidden px-3 py-1.5 rounded-full text-xs font-medium transition-all hover:bg-[#2a2a2a]"
+                style={{ border: "1px solid rgba(68,71,72,0.3)", color: "#c4c7c8" }}
+              >
+                {panelOpen ? "Hide info" : "Recent searches"}
+              </button>
+              <button
                 onClick={() => runSearch(submittedQuery)}
                 className="ml-auto px-3 py-1.5 rounded-full text-xs font-medium transition-all hover:bg-[#2a2a2a]"
                 style={{ border: "1px solid rgba(68,71,72,0.3)", color: "#c4c7c8" }}
@@ -256,7 +264,7 @@ export default function SearchPage() {
 
           {/* Right panel */}
           <aside
-            className="w-64 shrink-0 overflow-y-auto p-6 flex flex-col gap-6"
+            className={`${panelOpen ? "flex" : "hidden"} lg:flex w-full lg:w-64 shrink-0 overflow-y-auto p-4 sm:p-6 flex-col gap-6 order-first lg:order-last`}
             style={{ borderLeft: "1px solid rgba(68,71,72,0.1)" }}
           >
             <div>

@@ -116,7 +116,7 @@ export default function RegisterPage() {
         </div>
 
         <div
-          className="w-full max-w-[440px] rounded-xl p-10 shadow-2xl"
+          className="w-full max-w-[440px] rounded-xl p-6 sm:p-10 shadow-2xl"
           style={{
             background: "rgba(255,255,255,0.04)",
             border: "1px solid rgba(255,255,255,0.08)",
