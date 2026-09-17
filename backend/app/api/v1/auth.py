@@ -17,7 +17,9 @@ from app.services.authService import AuthService
 router = APIRouter()
 bearer = HTTPBearer()
 
-GOOGLE_REDIRECT_URI = "http://localhost:8000/api/v1/auth/google/callback"
+# Must byte-match an authorised redirect URI in the Google console, so it is
+# derived from configuration rather than hardcoded to localhost.
+GOOGLE_REDIRECT_URI = f"{settings.BACKEND_URL.rstrip('/')}/api/v1/auth/google/callback"
 
 
 # ── DB dependency ─────────────────────────────────────────────────────────────

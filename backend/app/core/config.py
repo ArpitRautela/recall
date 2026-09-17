@@ -16,6 +16,10 @@ class Settings(BaseSettings):
     JWT_SECRET_KEY: str
     JWT_ALGORITHM: str = "HS256"
     FRONTEND_URL: str = "http://localhost:3000"
+    # This service's own public origin. Used to build the Google OAuth redirect,
+    # which must byte-match an authorised URI in the Google console. Behind a
+    # proxy or PaaS the request's own host is not reliable, so it is configured.
+    BACKEND_URL: str = "http://localhost:8000"
 
     MINIO_ENDPOINT: str
     MINIO_ACCESS_KEY: str
