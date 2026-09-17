@@ -14,11 +14,35 @@ from app.models.document import Document, DocumentStatus
 from app.models.document_chunk import DocumentChunk
 from app.tasks.document_processor import process_document
 
-ALLOWED_MIME_TYPES = {
-    "application/pdf",
-    "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
-}
+PDF_MIME = "application/pdf"
+DOCX_MIME = "application/vnd.openxmlformats-officedocument.wordprocessingml.document"
+ALLOWED_MIME_TYPES = {PDF_MIME, DOCX_MIME}
 MAX_FILE_SIZE = 50 * 1024 * 1024  # 50MB
+
+
+def _sniff_mime(data: bytes) -> str | None:
+    """Identify the file from its own bytes.
+
+    The multipart Content-Type header is supplied by the client and can claim
+    anything. Since the processing pipeline hands these bytes to PyMuPDF and
+    python-docx, trusting that header means a caller chooses which parser runs
+    on their content. Magic bytes are checked instead.
+    """
+    if data.startswith(b"%PDF-"):
+        return PDF_MIME
+    # DOCX is a ZIP (PK). Distinguish it from any other zip by the
+    # OOXML word/ part, rather than accepting every archive as a document.
+    if data.startswith(b"PK"):
+        try:
+            import zipfile
+
+            with zipfile.ZipFile(BytesIO(data)) as z:
+                names = z.namelist()
+            if any(n.startswith("word/") for n in names):
+                return DOCX_MIME
+        except zipfile.BadZipFile:
+            return None
+    return None
 
 
 class DocumentService:
@@ -32,6 +56,8 @@ class DocumentService:
         return {"used_bytes": int(used), "quota_bytes": settings.STORAGE_QUOTA_BYTES}
 
     async def upload_to_minio(file: UploadFile, user_id: int, db: Session) -> tuple[str, int]:
+        # Cheap rejection on the declared type first, so an obviously wrong upload
+        # doesn't get read into memory at all.
         if file.content_type not in ALLOWED_MIME_TYPES:
             raise HTTPException(
                 status_code=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
@@ -60,6 +86,24 @@ class DocumentService:
                 detail=(
                     f"Storage quota exceeded. {remaining / (1024 * 1024):.1f}MB remaining, "
                     f"this file needs {size / (1024 * 1024):.1f}MB."
+                ),
+            )
+
+        # Authoritative check: what the bytes actually are. The declared type is
+        # only a hint, and the stored mime_type decides which parser the Celery
+        # task runs, so it must come from the content.
+        sniffed = _sniff_mime(data)
+        if sniffed is None or sniffed not in ALLOWED_MIME_TYPES:
+            raise HTTPException(
+                status_code=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
+                detail="File content is not a valid PDF or DOCX.",
+            )
+        if sniffed != file.content_type:
+            raise HTTPException(
+                status_code=status.HTTP_415_UNSUPPORTED_MEDIA_TYPE,
+                detail=(
+                    f"File content is {sniffed} but was uploaded as "
+                    f"{file.content_type}."
                 ),
             )
 
