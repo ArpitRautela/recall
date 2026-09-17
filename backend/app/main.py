@@ -11,10 +11,14 @@ from app.api.v1.memory import router as memoryRoutes
 from app.api.v1.search import router as searchRoutes
 from app.api.v1.workspaces import router as workspacesRoutes
 from app.core.config import settings
+from app.core.logging_config import configure_logging
 from app.core.embeddings import get_embedding_model
 from app.core.minio_client import get_minio_client
 from app.core.qdrant_client import get_qdrant_client
 from app.core.reranker import get_reranker_model
+
+
+configure_logging()
 
 
 @asynccontextmanager

@@ -1,6 +1,7 @@
 import asyncio
 import json
 import logging
+import time
 from datetime import datetime, timezone
 
 from fastapi import HTTPException, status
@@ -14,6 +15,7 @@ from sqlalchemy.orm import Session
 
 from app.core.config import settings
 from app.core.embeddings import embed_texts
+from app.core.logging_config import RAG_LOGGER
 from app.core.qdrant_client import COLLECTION_NAME, get_qdrant_client
 from app.core.reranker import rerank
 from app.models.activity_event import ActivityEventType
@@ -31,6 +33,7 @@ SYSTEM_PROMPT = (
 )
 
 logger = logging.getLogger(__name__)
+rag_log = logging.getLogger(RAG_LOGGER)
 
 
 def _sse(event: str, data: dict) -> str:
@@ -40,8 +43,27 @@ def _sse(event: str, data: dict) -> str:
 
 RERANK_CANDIDATE_POOL_SIZE = 20
 RERANK_TOP_K = 5
-RERANK_SCORE_THRESHOLD = 0.0  # raw cross-encoder logit — starting guess, tune
-                               # against real observed scores during verification
+# Raw cross-encoder logit, not a probability — see app/core/reranker.py.
+#
+# Measured against a real corpus (a 166-chunk Supreme Court opinion plus the
+# Meridian handbook) rather than guessed:
+#
+#   worst genuine hit   -3.13  "is economic and political significance an
+#                               unprincipled standard" — the chunk containing
+#                               that exact phrase
+#   best genuine miss   -5.59  "What did the Court hold about the Voting Rights
+#                               Act?" — legal vocabulary, absent from the corpus
+#
+# The previous value of 0.0 sat three points above the worst real hit, so the
+# tool discarded correct passages it had already retrieved and reported finding
+# nothing. -4.0 sits inside the measured window, nearer the hit side because a
+# false negative ("not in your documents") is worse than a weak extra source the
+# reranker has already ranked last.
+#
+# ms-marco-MiniLM scores dense judicial prose far lower than the web passages it
+# was trained on, so this number is domain-sensitive. Re-measure if the corpus
+# changes character.
+RERANK_SCORE_THRESHOLD = -4.0
 EXCERPT_MAX_CHARS = 300
 
 
@@ -49,6 +71,9 @@ def _make_search_tool(db: Session, user_id: int, captured_sources: list):
     @tool
     def search_knowledge_base(query: str) -> str:
         """Search the user's uploaded documents for content relevant to the query."""
+        t0 = time.perf_counter()
+        q_short = query if len(query) <= 80 else query[:79] + "…"
+
         ready_doc_ids = [
             row[0]
             for row in db.query(Document.id)
@@ -56,9 +81,18 @@ def _make_search_tool(db: Session, user_id: int, captured_sources: list):
             .all()
         ]
         if not ready_doc_ids:
+            rag_log.info(
+                "search user=%s q=%r outcome=NO_READY_DOCS "
+                "| the account has no documents in READY state",
+                user_id, q_short,
+            )
             return "The user has no processed documents available to search."
 
+        t_embed = time.perf_counter()
         vector = embed_texts([query])[0]
+        embed_ms = (time.perf_counter() - t_embed) * 1000
+
+        t_q = time.perf_counter()
         results = get_qdrant_client().query_points(
             collection_name=COLLECTION_NAME,
             query=vector,
@@ -68,11 +102,20 @@ def _make_search_tool(db: Session, user_id: int, captured_sources: list):
             limit=RERANK_CANDIDATE_POOL_SIZE,
             with_payload=True,
         ).points
+        qdrant_ms = (time.perf_counter() - t_q) * 1000
 
         if not results:
+            rag_log.info(
+                "search user=%s q=%r docs=%d candidates=0 outcome=NO_VECTOR_HITS "
+                "| embed=%.0fms qdrant=%.0fms | nothing in the vector store matched the filter",
+                user_id, q_short, len(ready_doc_ids), embed_ms, qdrant_ms,
+            )
             return "No relevant content found in the user's documents."
 
+        t_r = time.perf_counter()
         rerank_scores = rerank(query, [p.payload["text"] for p in results])
+        rerank_ms = (time.perf_counter() - t_r) * 1000
+
         scored = sorted(zip(results, rerank_scores), key=lambda pair: pair[1], reverse=True)
         top = [
             (point, score)
@@ -80,8 +123,43 @@ def _make_search_tool(db: Session, user_id: int, captured_sources: list):
             if score >= RERANK_SCORE_THRESHOLD
         ]
 
+        best = scored[0][1]
+        top_scores = ", ".join(f"{s:+.2f}" for _, s in scored[:5])
+        total_ms = (time.perf_counter() - t0) * 1000
+
+        # Per-candidate detail, for when the summary line isn't enough.
+        if rag_log.isEnabledFor(logging.DEBUG):
+            for rank, (p, s) in enumerate(scored, 1):
+                rag_log.debug(
+                    "  cand %2d score=%+7.2f %s doc=%s chunk=%s p.%s | %s",
+                    rank, s, "KEEP" if s >= RERANK_SCORE_THRESHOLD else "drop",
+                    p.payload["document_id"], p.payload["chunk_index"],
+                    p.payload.get("page_number"),
+                    p.payload["text"][:70].replace("\n", " "),
+                )
+
         if not top:
+            # The actionable number: how far the best candidate fell short. A small
+            # gap means the threshold is mis-tuned; a large one means nothing relevant
+            # is actually in the corpus.
+            rag_log.info(
+                "search user=%s q=%r docs=%d candidates=%d outcome=BELOW_THRESHOLD "
+                "| best=%+.2f threshold=%+.2f short_by=%.2f top5=[%s] "
+                "| embed=%.0fms qdrant=%.0fms rerank=%.0fms total=%.0fms",
+                user_id, q_short, len(ready_doc_ids), len(results),
+                best, RERANK_SCORE_THRESHOLD, RERANK_SCORE_THRESHOLD - best, top_scores,
+                embed_ms, qdrant_ms, rerank_ms, total_ms,
+            )
             return "No sufficiently relevant content was found in the user's documents for this query."
+
+        rag_log.info(
+            "search user=%s q=%r docs=%d candidates=%d outcome=OK kept=%d "
+            "| best=%+.2f threshold=%+.2f top5=[%s] "
+            "| embed=%.0fms qdrant=%.0fms rerank=%.0fms total=%.0fms",
+            user_id, q_short, len(ready_doc_ids), len(results), len(top),
+            best, RERANK_SCORE_THRESHOLD, top_scores,
+            embed_ms, qdrant_ms, rerank_ms, total_ms,
+        )
 
         doc_ids = {p.payload["document_id"] for p, _ in top}
         filenames = {
@@ -209,6 +287,19 @@ class ChatService:
 
         final_text = result["messages"][-1].content
 
+        if not captured_sources:
+            # No sources means either the tool returned nothing usable, or the agent
+            # chose not to call it at all. The tool logs its own outcome, so an absent
+            # 'search' line above this one means the agent never searched.
+            rag_log.info(
+                "turn conv=%s user=%s outcome=NO_SOURCES "
+                "| answered without citing documents (see whether a 'search' line precedes this)",
+                conv.id, user.id,
+            )
+        else:
+            rag_log.info("turn conv=%s user=%s outcome=GROUNDED sources=%d",
+                         conv.id, user.id, len(captured_sources))
+
         assistant_msg = ChatService._finalise_turn(
             db, user, conv, is_first_turn, message, final_text, captured_sources
         )
@@ -272,6 +363,15 @@ class ChatService:
             yield _sse("error", {"detail": "AI service temporarily unavailable"})
         finally:
             final_text = "".join(chunks)
+            if not captured_sources:
+                rag_log.info(
+                    "turn conv=%s user=%s outcome=NO_SOURCES streamed=1 "
+                    "| answered without citing documents (see whether a 'search' line precedes this)",
+                    conv.id, user.id,
+                )
+            else:
+                rag_log.info("turn conv=%s user=%s outcome=GROUNDED streamed=1 sources=%d",
+                             conv.id, user.id, len(captured_sources))
             if final_text:
                 try:
                     assistant_msg = ChatService._finalise_turn(
