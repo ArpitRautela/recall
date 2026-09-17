@@ -1,0 +1,94 @@
+# Runs on GitHub's servers on every push and pull request.
+# GitHub finds this automatically because of the path: .github/workflows/*.yml
+name: CI
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+
+# A second push to the same branch cancels the first run still in progress,
+# so you aren't paying for CI on code nobody is looking at any more.
+concurrency:
+  group: ci-${{ github.ref }}
+  cancel-in-progress: true
+
+jobs:
+  # Jobs run in PARALLEL on separate machines unless you declare `needs:`.
+  # Backend and frontend are independent, so both start at once.
+  backend:
+    name: Backend tests
+    runs-on: ubuntu-latest
+
+    steps:
+      # Every job starts on an empty machine — this clones your repo into it.
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.13"
+          # Caches ~/.cache/pip between runs, keyed by the hash of the
+          # requirements file. Change a dependency and the cache is rebuilt.
+          cache: pip
+          cache-dependency-path: backend/requirements.txt
+
+      # The default PyPI torch wheel pulls several GB of NVIDIA CUDA packages
+      # that a CI runner has no GPU to use. Installing the CPU build first means
+      # the next step sees torch as already satisfied. Same trick as the Dockerfile.
+      - name: Install CPU-only torch
+        run: pip install torch --index-url https://download.pytorch.org/whl/cpu
+
+      - name: Install dependencies
+        run: pip install -r backend/requirements.txt
+
+      - name: Run tests
+        working-directory: backend
+        # Settings has 11 fields with no defaults and .env is gitignored, so
+        # without these the app fails to import before any test runs. Environment
+        # variables take priority over the .env file, which is what makes this work.
+        # The values only need to be syntactically valid — the tests patch out
+        # MinIO, Qdrant, Redis and Celery, and use in-memory SQLite.
+        env:
+          DATABASE_URL: mysql+pymysql://ci:ci@localhost:3306/ci
+          REDIS_URL: redis://localhost:6379
+          QDRANT_URL: http://localhost:6333
+          OPENAI_API_KEY: sk-not-a-real-key
+          JWT_SECRET_KEY: ci-only-not-a-secret
+          GOOGLE_CLIENT_ID: ci
+          GOOGLE_CLIENT_SECRET: ci
+          MINIO_ENDPOINT: localhost:9000
+          MINIO_ACCESS_KEY: ci
+          MINIO_SECRET_KEY: ci
+          MINIO_BUCKET: ci
+        run: pytest -q
+
+  frontend:
+    name: Frontend typecheck and build
+    runs-on: ubuntu-latest
+
+    steps:
+      - uses: actions/checkout@v4
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "20"
+          cache: npm
+          cache-dependency-path: frontend/package-lock.json
+
+      # `npm ci`, not `npm install`: it installs exactly what the lockfile says
+      # and fails if package.json and the lockfile disagree. That reproducibility
+      # is the whole point of CI.
+      - name: Install dependencies
+        working-directory: frontend
+        run: npm ci
+
+      # Runs even if the typecheck failed, so one push surfaces both problems
+      # rather than making you fix, push, and wait to find the next one.
+      - name: Typecheck
+        working-directory: frontend
+        run: npx tsc --noEmit
+
+      - name: Build
+        if: '!cancelled()'
+        working-directory: frontend
+        run: npm run build
